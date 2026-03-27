@@ -1,0 +1,15 @@
+{
+  "name": "PlayForge",
+  "short_name": "PlayForge",
+  "description": "Professional tactics platform for GAA and Soccer coaches",
+  "start_url": "/board",
+  "display": "standalone",
+  "background_color": "#0b0f18",
+  "theme_color": "#00d46e",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
