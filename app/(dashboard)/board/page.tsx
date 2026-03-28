@@ -6,6 +6,8 @@ import Toolbar from '@/components/ui/Toolbar';
 import PhaseBar from '@/components/ui/PhaseBar';
 import SaveModal from '@/components/ui/SaveModal';
 import ShareModal from '@/components/ui/ShareModal';
+import TrainingPanel from '@/components/ui/TrainingPanel';
+import SubstitutionsPanel from '@/components/ui/SubstitutionsPanel';
 import { usePlaybook } from '@/hooks/usePlaybook';
 import { useBoardStore } from '@/lib/store';
 
@@ -15,8 +17,9 @@ export default function BoardPage() {
   const [showSave, setShowSave] = useState(false);
   const [showShare, setShowShare] = useState(false);
   const [showUpgrade, setShowUpgrade] = useState(false);
+  const [showBench, setShowBench] = useState(false);
   const [currentPlayName, setCurrentPlayName] = useState('');
-  const { phases, sport } = useBoardStore();
+  const { phases, sport, mode } = useBoardStore();
   const { savePlay } = usePlaybook();
 
   async function handleSave(name: string, category: string) {
@@ -32,10 +35,16 @@ export default function BoardPage() {
 
   return (
     <div className="flex flex-col h-screen" style={{ background: 'var(--bg)' }}>
-      <Toolbar onSave={() => setShowSave(true)} onShare={() => setShowShare(true)} />
+      <Toolbar
+        onSave={() => setShowSave(true)}
+        onShare={() => setShowShare(true)}
+        onBench={() => setShowBench(v => !v)}
+      />
 
       <div className="flex-1 overflow-hidden relative">
         <TacticsBoard />
+        {mode === 'training' && <TrainingPanel />}
+        {showBench && <SubstitutionsPanel />}
       </div>
 
       <PhaseBar />

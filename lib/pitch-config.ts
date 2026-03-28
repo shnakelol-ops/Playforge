@@ -1,6 +1,26 @@
 export type Sport = 'gaa' | 'hurling' | 'soccer';
 export type RunStyle = 'run' | 'decoy' | 'pass';
-export type InteractionMode = 'move' | 'draw' | 'ball';
+export type InteractionMode = 'move' | 'draw' | 'ball' | 'ink' | 'training';
+export type TrainingItemType = 'cone' | 'ball' | 'pole' | 'ladder' | 'hurdle' | 'mannequin' | 'mini-goal' | 'zone-marker';
+export type InkShapeType = 'freehand' | 'line' | 'arrow' | 'circle' | 'rect';
+export type InkColor = 'white' | 'red' | 'yellow' | 'blue' | 'green' | 'black';
+export type InkWidth = 'thin' | 'medium' | 'thick';
+export type PlayerDisplayMode = 'number' | 'name' | 'bib';
+
+export const INK_COLORS: Record<InkColor, string> = {
+  white: '#ffffff',
+  red: '#ef4444',
+  yellow: '#facc15',
+  blue: '#3b82f6',
+  green: '#22c55e',
+  black: '#000000',
+};
+
+export const INK_WIDTHS: Record<InkWidth, number> = {
+  thin: 2,
+  medium: 4,
+  thick: 8,
+};
 
 export interface PlayerConfig {
   id: number;

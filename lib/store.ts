@@ -1,6 +1,8 @@
 import { create } from 'zustand';
-import type { Sport, InteractionMode, RunStyle, PlayerConfig } from './pitch-config';
+import type { Sport, InteractionMode, RunStyle, PlayerConfig, TrainingItemType, InkShapeType, InkColor, InkWidth, PlayerDisplayMode } from './pitch-config';
 import { getDefaultPositions } from './pitch-config';
+
+export type { PlayerDisplayMode, TrainingItemType, InkShapeType, InkColor, InkWidth };
 
 export interface Player extends PlayerConfig {
   team: 'home' | 'away';
@@ -24,6 +26,39 @@ export interface BallPosition {
   y: number;
 }
 
+export interface TrainingItem {
+  id: string;
+  type: TrainingItemType;
+  rx: number;
+  ry: number;
+  runEndX?: number;
+  runEndY?: number;
+  runCpX?: number;
+  runCpY?: number;
+}
+
+export interface FreehandStroke {
+  id: string;
+  shapeType: InkShapeType;
+  color: InkColor;
+  width: InkWidth;
+  isZoneFill?: boolean;
+  points?: Array<{ rx: number; ry: number }>;
+  x1?: number;
+  y1?: number;
+  x2?: number;
+  y2?: number;
+}
+
+export interface TextLabel {
+  id: string;
+  text: string;
+  rx: number;
+  ry: number;
+  fontSize: number;
+  color: string;
+}
+
 export interface Phase {
   phaseNumber: number;
   playerPositions: {
@@ -32,6 +67,9 @@ export interface Phase {
   };
   runs: Run[];
   ballPosition: BallPosition;
+  trainingItems?: TrainingItem[];
+  inkStrokes?: FreehandStroke[];
+  textLabels?: TextLabel[];
 }
 
 interface BoardStore {
@@ -45,6 +83,27 @@ interface BoardStore {
   showHome: boolean;
   showAway: boolean;
 
+  // Ink mode
+  inkColor: InkColor;
+  inkWidth: InkWidth;
+  inkShapeType: InkShapeType;
+  isZoneFill: boolean;
+
+  // Training
+  selectedTrainingType: TrainingItemType | null;
+
+  // Appearance
+  playerDisplayMode: PlayerDisplayMode;
+  showNumbers: boolean;
+  showPositions: boolean;
+
+  // Selection
+  selectedEntityId: string | null;
+
+  // Bench (substitutions)
+  benchPlayers: Player[];
+  pendingSubId: string | null;
+
   setSport: (sport: Sport) => void;
   setMode: (mode: InteractionMode) => void;
   setRunStyle: (style: RunStyle) => void;
@@ -53,12 +112,33 @@ interface BoardStore {
   setAnimationSpeed: (speed: number) => void;
   setShowHome: (val: boolean) => void;
   setShowAway: (val: boolean) => void;
+  setInkColor: (color: InkColor) => void;
+  setInkWidth: (width: InkWidth) => void;
+  setInkShapeType: (shapeType: InkShapeType) => void;
+  setIsZoneFill: (val: boolean) => void;
+  setSelectedTrainingType: (type: TrainingItemType | null) => void;
+  setPlayerDisplayMode: (mode: PlayerDisplayMode) => void;
+  setShowNumbers: (val: boolean) => void;
+  setShowPositions: (val: boolean) => void;
+  setSelectedEntityId: (id: string | null) => void;
+  setBenchPlayers: (players: Player[]) => void;
+  setPendingSubId: (id: string | null) => void;
   addPhase: () => void;
   updatePlayerPosition: (phaseIndex: number, team: 'home' | 'away', playerId: number, rx: number, ry: number) => void;
   addRun: (phaseIndex: number, run: Run) => void;
   removeRun: (phaseIndex: number, playerId: number) => void;
   updateRunControlPoint: (phaseIndex: number, playerId: number, cpX: number, cpY: number) => void;
   setBallPosition: (phaseIndex: number, pos: BallPosition) => void;
+  addTrainingItem: (phaseIndex: number, item: TrainingItem) => void;
+  moveTrainingItem: (phaseIndex: number, id: string, rx: number, ry: number) => void;
+  removeTrainingItem: (phaseIndex: number, id: string) => void;
+  updateTrainingItemPath: (phaseIndex: number, id: string, endX: number, endY: number, cpX: number, cpY: number) => void;
+  addInkStroke: (phaseIndex: number, stroke: FreehandStroke) => void;
+  clearInkStrokes: (phaseIndex: number) => void;
+  addTextLabel: (phaseIndex: number, label: TextLabel) => void;
+  moveTextLabel: (phaseIndex: number, id: string, rx: number, ry: number) => void;
+  updateTextLabelText: (phaseIndex: number, id: string, text: string) => void;
+  removeTextLabel: (phaseIndex: number, id: string) => void;
   loadPlay: (phases: Phase[], sport: Sport) => void;
   resetBoard: (sport: Sport) => void;
 }
@@ -73,6 +153,9 @@ function createInitialPhase(sport: Sport): Phase {
     },
     runs: [],
     ballPosition: { x: 0.5, y: 0.5 },
+    trainingItems: [],
+    inkStrokes: [],
+    textLabels: [],
   };
 }
 
@@ -87,6 +170,22 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
   showHome: true,
   showAway: true,
 
+  inkColor: 'white',
+  inkWidth: 'medium',
+  inkShapeType: 'freehand',
+  isZoneFill: false,
+
+  selectedTrainingType: null,
+
+  playerDisplayMode: 'number',
+  showNumbers: true,
+  showPositions: false,
+
+  selectedEntityId: null,
+
+  benchPlayers: [],
+  pendingSubId: null,
+
   setSport: (sport) => set({ sport, phases: [createInitialPhase(sport)], currentPhase: 0 }),
   setMode: (mode) => set({ mode }),
   setRunStyle: (runStyle) => set({ runStyle }),
@@ -95,6 +194,17 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
   setAnimationSpeed: (animationSpeed) => set({ animationSpeed }),
   setShowHome: (showHome) => set({ showHome }),
   setShowAway: (showAway) => set({ showAway }),
+  setInkColor: (inkColor) => set({ inkColor }),
+  setInkWidth: (inkWidth) => set({ inkWidth }),
+  setInkShapeType: (inkShapeType) => set({ inkShapeType }),
+  setIsZoneFill: (isZoneFill) => set({ isZoneFill }),
+  setSelectedTrainingType: (selectedTrainingType) => set({ selectedTrainingType }),
+  setPlayerDisplayMode: (playerDisplayMode) => set({ playerDisplayMode }),
+  setShowNumbers: (showNumbers) => set({ showNumbers }),
+  setShowPositions: (showPositions) => set({ showPositions }),
+  setSelectedEntityId: (selectedEntityId) => set({ selectedEntityId }),
+  setBenchPlayers: (benchPlayers) => set({ benchPlayers }),
+  setPendingSubId: (pendingSubId) => set({ pendingSubId }),
 
   addPhase: () => {
     const { phases } = get();
@@ -154,6 +264,94 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
   setBallPosition: (phaseIndex, pos) => {
     const phases = [...get().phases];
     phases[phaseIndex] = { ...phases[phaseIndex], ballPosition: pos };
+    set({ phases });
+  },
+
+  addTrainingItem: (phaseIndex, item) => {
+    const phases = [...get().phases];
+    const phase = { ...phases[phaseIndex] };
+    phase.trainingItems = [...(phase.trainingItems ?? []), item];
+    phases[phaseIndex] = phase;
+    set({ phases });
+  },
+
+  moveTrainingItem: (phaseIndex, id, rx, ry) => {
+    const phases = [...get().phases];
+    const phase = { ...phases[phaseIndex] };
+    phase.trainingItems = (phase.trainingItems ?? []).map(item =>
+      item.id === id ? { ...item, rx, ry } : item
+    );
+    phases[phaseIndex] = phase;
+    set({ phases });
+  },
+
+  removeTrainingItem: (phaseIndex, id) => {
+    const phases = [...get().phases];
+    const phase = { ...phases[phaseIndex] };
+    phase.trainingItems = (phase.trainingItems ?? []).filter(item => item.id !== id);
+    phases[phaseIndex] = phase;
+    set({ phases });
+  },
+
+  updateTrainingItemPath: (phaseIndex, id, endX, endY, cpX, cpY) => {
+    const phases = [...get().phases];
+    const phase = { ...phases[phaseIndex] };
+    phase.trainingItems = (phase.trainingItems ?? []).map(item =>
+      item.id === id ? { ...item, runEndX: endX, runEndY: endY, runCpX: cpX, runCpY: cpY } : item
+    );
+    phases[phaseIndex] = phase;
+    set({ phases });
+  },
+
+  addInkStroke: (phaseIndex, stroke) => {
+    const phases = [...get().phases];
+    const phase = { ...phases[phaseIndex] };
+    phase.inkStrokes = [...(phase.inkStrokes ?? []), stroke];
+    phases[phaseIndex] = phase;
+    set({ phases });
+  },
+
+  clearInkStrokes: (phaseIndex) => {
+    const phases = [...get().phases];
+    const phase = { ...phases[phaseIndex] };
+    phase.inkStrokes = [];
+    phases[phaseIndex] = phase;
+    set({ phases });
+  },
+
+  addTextLabel: (phaseIndex, label) => {
+    const phases = [...get().phases];
+    const phase = { ...phases[phaseIndex] };
+    phase.textLabels = [...(phase.textLabels ?? []), label];
+    phases[phaseIndex] = phase;
+    set({ phases });
+  },
+
+  moveTextLabel: (phaseIndex, id, rx, ry) => {
+    const phases = [...get().phases];
+    const phase = { ...phases[phaseIndex] };
+    phase.textLabels = (phase.textLabels ?? []).map(label =>
+      label.id === id ? { ...label, rx, ry } : label
+    );
+    phases[phaseIndex] = phase;
+    set({ phases });
+  },
+
+  updateTextLabelText: (phaseIndex, id, text) => {
+    const phases = [...get().phases];
+    const phase = { ...phases[phaseIndex] };
+    phase.textLabels = (phase.textLabels ?? []).map(label =>
+      label.id === id ? { ...label, text } : label
+    );
+    phases[phaseIndex] = phase;
+    set({ phases });
+  },
+
+  removeTextLabel: (phaseIndex, id) => {
+    const phases = [...get().phases];
+    const phase = { ...phases[phaseIndex] };
+    phase.textLabels = (phase.textLabels ?? []).filter(label => label.id !== id);
+    phases[phaseIndex] = phase;
     set({ phases });
   },
 
