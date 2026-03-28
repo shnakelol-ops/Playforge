@@ -56,7 +56,7 @@ export default function TermsPage() {
               <li>WhatsApp sharing</li>
             </ul>
             <p className="mb-4">
-              PlayForge reserves the right to modify or discontinue the Free plan with 30 days' notice.
+              PlayForge reserves the right to modify or discontinue the Free plan with 30 days&apos; notice.
             </p>
           </section>
 
@@ -125,7 +125,7 @@ export default function TermsPage() {
           <section className="mb-8">
             <h2 className="text-2xl font-semibold mb-4" style={{ color: 'var(--txt)' }}>9. Disclaimer of Warranties</h2>
             <p className="mb-4">
-              PlayForge is provided "as is" without warranties of any kind. We make no guarantee that:
+              PlayForge is provided &quot;as is&quot; without warranties of any kind. We make no guarantee that:
             </p>
             <ul className="list-disc list-inside space-y-2 mb-4">
               <li>The service will be uninterrupted or error-free</li>
