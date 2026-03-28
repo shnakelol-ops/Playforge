@@ -4,7 +4,7 @@ import { useBoardStore } from '@/lib/store';
 import type { InteractionMode, RunStyle, Sport } from '@/lib/pitch-config';
 
 const sports: { value: Sport; label: string }[] = [
-  { value: 'gaa', label: 'GAA' },
+  { value: 'gaa', label: 'Gaelic Football' },
   { value: 'hurling', label: 'Hurling' },
   { value: 'soccer', label: 'Soccer' },
 ];

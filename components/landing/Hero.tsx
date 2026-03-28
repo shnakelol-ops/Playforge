@@ -67,7 +67,7 @@ export default function Hero() {
           Forge your game plan
         </h1>
         <p className="text-lg mb-10" style={{ color: 'var(--txt2)' }}>
-          The professional tactics platform for GAA and Soccer coaches. Draw plays, animate movements, share with your team.
+          The professional tactics platform for Gaelic and Soccer coaches. Draw plays, animate movements, share with your team.
         </p>
         <div className="flex gap-4 justify-center flex-wrap">
           <Link

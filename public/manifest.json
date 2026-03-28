@@ -1,7 +1,7 @@
 {
   "name": "PlayForge",
   "short_name": "PlayForge",
-  "description": "Professional tactics platform for GAA and Soccer coaches",
+  "description": "Professional tactics platform for Gaelic Football, Hurling, and Soccer coaches",
   "start_url": "/board",
   "display": "standalone",
   "background_color": "#0b0f18",

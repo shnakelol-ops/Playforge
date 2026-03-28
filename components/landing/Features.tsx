@@ -11,8 +11,8 @@ const features = [
   },
   {
     icon: '🏐',
-    title: 'GAA + Soccer pitches',
-    desc: 'Full support for GAA Football, GAA Hurling, and Soccer with accurate pitch markings.',
+    title: 'Multiple sport pitches',
+    desc: 'Full support for Gaelic Football, Hurling, and Soccer with accurate pitch markings.',
   },
   {
     icon: '🔒',

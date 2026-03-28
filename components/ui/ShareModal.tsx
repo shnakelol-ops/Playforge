@@ -10,8 +10,8 @@ interface Props {
 
 function generateWhatsAppMessage(playName: string, sport: string, phases: Phase[]): string {
   const sportLabel: Record<string, string> = {
-    gaa: 'GAA Football',
-    hurling: 'GAA Hurling',
+    gaa: 'Gaelic Football',
+    hurling: 'Hurling',
     soccer: 'Soccer',
   };
   let msg = `*PlayForge* — ${sportLabel[sport] ?? sport}\n\n`;
@@ -34,7 +34,7 @@ function generateWhatsAppMessage(playName: string, sport: string, phases: Phase[
     msg += '\n';
   });
 
-  msg += `_Shared via PlayForge — playforge.app_`;
+  msg += `Created with PlayForge — Independent coaching tools for Gaelic and Soccer coaches — playforge.app`;
   return msg;
 }
 

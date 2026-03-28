@@ -11,12 +11,19 @@ export default function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [sport, setSport] = useState('gaa');
+  const [ageConfirmed, setAgeConfirmed] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
+
+    if (!ageConfirmed) {
+      setError('You must confirm you are 16 years or older');
+      return;
+    }
+
     setLoading(true);
 
     const supabase = createClient();
@@ -37,14 +44,14 @@ export default function RegisterPage() {
   }
 
   const sportOptions = [
-    { value: 'gaa', label: 'GAA Football' },
-    { value: 'hurling', label: 'GAA Hurling' },
+    { value: 'gaa', label: 'Gaelic Football' },
+    { value: 'hurling', label: 'Hurling' },
     { value: 'soccer', label: 'Soccer' },
   ];
 
   return (
-    <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg)' }}>
-      <div className="w-full max-w-sm p-8 rounded-2xl" style={{ background: 'var(--bg2)', border: '1px solid var(--bdr)' }}>
+    <div className="min-h-screen flex flex-col items-center justify-center px-6" style={{ background: 'var(--bg)' }}>
+      <div className="w-full max-w-sm p-8 rounded-2xl mb-8" style={{ background: 'var(--bg2)', border: '1px solid var(--bdr)' }}>
         <h1 className="text-2xl font-bold mb-2" style={{ color: 'var(--txt)' }}>Create your account</h1>
         <p className="text-sm mb-6" style={{ color: 'var(--txt2)' }}>Start free — no credit card needed</p>
 
@@ -100,6 +107,19 @@ export default function RegisterPage() {
 
           {error && <p className="text-red-400 text-sm">{error}</p>}
 
+          <div className="flex items-start gap-3 my-4">
+            <input
+              type="checkbox"
+              id="age-confirm"
+              checked={ageConfirmed}
+              onChange={e => setAgeConfirmed(e.target.checked)}
+              className="mt-1"
+            />
+            <label htmlFor="age-confirm" className="text-sm" style={{ color: 'var(--txt2)' }}>
+              I confirm I am 16 years of age or older
+            </label>
+          </div>
+
           <button
             type="submit"
             disabled={loading}
@@ -108,6 +128,17 @@ export default function RegisterPage() {
           >
             {loading ? 'Creating account...' : 'Create account'}
           </button>
+
+          <p className="text-xs text-center mt-4" style={{ color: 'var(--txt2)' }}>
+            By creating an account you agree to our{' '}
+            <Link href="/terms" style={{ color: 'var(--acc)', textDecoration: 'underline' }}>
+              Terms of Service
+            </Link>
+            {' '}and{' '}
+            <Link href="/privacy" style={{ color: 'var(--acc)', textDecoration: 'underline' }}>
+              Privacy Policy
+            </Link>
+          </p>
         </form>
 
         <p className="mt-6 text-center text-sm" style={{ color: 'var(--txt2)' }}>
@@ -117,6 +148,10 @@ export default function RegisterPage() {
           </Link>
         </p>
       </div>
+
+      <footer className="text-center text-xs max-w-sm" style={{ color: 'var(--txt2)', marginTop: 'auto', paddingBottom: '2rem' }}>
+        PlayForge is an independent coaching tool and is not affiliated with, endorsed by, or connected to the GAA, the FAI, or any sporting governing body.
+      </footer>
     </div>
   );
 }

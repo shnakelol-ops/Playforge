@@ -2,10 +2,10 @@ const testimonials = [
   {
     quote: "PlayForge has completely changed how I prepare for matches. I can show the players exactly what I want in seconds.",
     name: "Seán O'Brien",
-    role: "Senior Football Manager, Club GAA",
+    role: "Senior Football Manager, Club Gaelic",
   },
   {
-    quote: "Finally an app designed for GAA coaches, not just soccer. The hurling pitch is spot on.",
+    quote: "Finally an app designed for Gaelic and Hurling coaches, not just soccer. The hurling pitch is spot on.",
     name: "Aoife Ní Mhurchú",
     role: "Camogie Coach",
   },

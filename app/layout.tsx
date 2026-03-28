@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { DM_Sans, Bebas_Neue, DM_Mono } from 'next/font/google';
+import CookieConsent from '@/components/ui/CookieConsent';
 import './globals.css';
 
 const dmSans = DM_Sans({ subsets: ['latin'], variable: '--font-dm-sans' });
@@ -7,8 +8,8 @@ const bebasNeue = Bebas_Neue({ subsets: ['latin'], weight: '400', variable: '--f
 const dmMono = DM_Mono({ subsets: ['latin'], weight: ['400', '500'], variable: '--font-dm-mono' });
 
 export const metadata: Metadata = {
-  title: 'PlayForge — GAA & Soccer Tactics Platform',
-  description: 'The professional tactics platform for GAA and Soccer coaches. Draw plays, animate movements, share with your team.',
+  title: 'PlayForge — Gaelic & Soccer Tactics Platform',
+  description: 'The professional tactics platform for Gaelic Football, Hurling, and Soccer coaches. Draw plays, animate movements, share with your team.',
   manifest: '/manifest.json',
 };
 
@@ -24,6 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className={`${dmSans.variable} ${bebasNeue.variable} ${dmMono.variable} antialiased`}>
         {children}
+        <CookieConsent />
       </body>
     </html>
   );
