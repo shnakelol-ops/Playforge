@@ -9,6 +9,7 @@ export interface SavedPlay {
   category: string;
   sport: string;
   phases: unknown[];
+  notes?: string;
   created_at: string;
 }
 
@@ -30,7 +31,7 @@ export function usePlaybook() {
     fetchPlays();
   }, [fetchPlays]);
 
-  async function savePlay(name: string, category: string, sport: string, phases: unknown[]) {
+  async function savePlay(name: string, category: string, sport: string, phases: unknown[], notes?: string) {
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
@@ -52,6 +53,40 @@ export function usePlaybook() {
       category,
       sport,
       phases,
+      notes,
+    });
+
+    await fetchPlays();
+  }
+
+  async function duplicatePlay(id: string) {
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    // Check plan limits
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('plan')
+      .eq('id', user.id)
+      .single();
+
+    if (profile?.plan === 'free' && plays.length >= 3) {
+      throw new Error('FREE_LIMIT');
+    }
+
+    // Find the play to duplicate
+    const playToDuplicate = plays.find(p => p.id === id);
+    if (!playToDuplicate) throw new Error('Play not found');
+
+    // Create new play with "Copy" suffix
+    await supabase.from('plays').insert({
+      user_id: user.id,
+      name: `${playToDuplicate.name} Copy`,
+      category: playToDuplicate.category,
+      sport: playToDuplicate.sport,
+      phases: playToDuplicate.phases,
+      notes: playToDuplicate.notes,
     });
 
     await fetchPlays();
@@ -63,5 +98,5 @@ export function usePlaybook() {
     setPlays(prev => prev.filter(p => p.id !== id));
   }
 
-  return { plays, loading, savePlay, deletePlay, refetch: fetchPlays };
+  return { plays, loading, savePlay, deletePlay, duplicatePlay, refetch: fetchPlays };
 }

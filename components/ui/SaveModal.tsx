@@ -5,7 +5,7 @@ import { useBoardStore } from '@/lib/store';
 
 interface Props {
   onClose: () => void;
-  onSave: (name: string, category: string) => Promise<void>;
+  onSave: (name: string, category: string, notes?: string) => Promise<void>;
 }
 
 const categories = [
@@ -19,12 +19,16 @@ export default function SaveModal({ onClose, onSave }: Props) {
   const { phases, sport } = useBoardStore();
   const [name, setName] = useState('');
   const [category, setCategory] = useState('attack');
+  const [customCategory, setCustomCategory] = useState('');
+  const [notes, setNotes] = useState('');
   const [saving, setSaving] = useState(false);
+
+  const finalCategory = customCategory.trim() || category;
 
   async function handleSave() {
     if (!name.trim()) return;
     setSaving(true);
-    await onSave(name.trim(), category);
+    await onSave(name.trim(), finalCategory, notes.trim() || undefined);
     setSaving(false);
     onClose();
   }
@@ -51,17 +55,37 @@ export default function SaveModal({ onClose, onSave }: Props) {
               {categories.map(c => (
                 <button
                   key={c.value}
-                  onClick={() => setCategory(c.value)}
+                  onClick={() => { setCategory(c.value); setCustomCategory(''); }}
                   className="py-2 rounded-lg text-xs font-medium transition-all"
                   style={{
-                    background: category === c.value ? 'var(--acc)' : 'var(--bg3)',
-                    color: category === c.value ? '#0b0f18' : 'var(--txt2)',
+                    background: category === c.value && !customCategory ? 'var(--acc)' : 'var(--bg3)',
+                    color: category === c.value && !customCategory ? '#0b0f18' : 'var(--txt2)',
                   }}
                 >
                   {c.label}
                 </button>
               ))}
             </div>
+            <input
+              type="text"
+              placeholder="Or enter custom category"
+              value={customCategory}
+              onChange={e => setCustomCategory(e.target.value)}
+              className="px-3 py-2 rounded-lg text-xs outline-none"
+              style={{ background: 'var(--bg3)', color: 'var(--txt)', border: '1px solid var(--bdr)' }}
+            />
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label className="text-xs" style={{ color: 'var(--txt2)' }}>Notes (optional)</label>
+            <textarea
+              placeholder="Add notes about this play..."
+              value={notes}
+              onChange={e => setNotes(e.target.value)}
+              className="px-3 py-2 rounded-lg text-xs outline-none resize-none"
+              rows={3}
+              style={{ background: 'var(--bg3)', color: 'var(--txt)', border: '1px solid var(--bdr)' }}
+            />
           </div>
 
           <p className="text-xs" style={{ color: 'var(--txt2)' }}>

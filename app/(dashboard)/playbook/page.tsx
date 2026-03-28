@@ -6,19 +6,31 @@ import { usePlaybook } from '@/hooks/usePlaybook';
 import { useBoardStore } from '@/lib/store';
 import type { Phase } from '@/lib/store';
 
-const categories = ['all', 'attack', 'defence', 'kickout', 'setpiece'];
-
 export default function PlaybookPage() {
-  const { plays, loading, deletePlay } = usePlaybook();
+  const { plays, loading, deletePlay, duplicatePlay } = usePlaybook();
   const { loadPlay } = useBoardStore();
   const [filter, setFilter] = useState('all');
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  const [duplicating, setDuplicating] = useState<string | null>(null);
+
+  // Get dynamic categories from plays
+  const uniqueCategories = Array.from(new Set(plays.map(p => p.category)));
+  const categories = ['all', ...uniqueCategories];
 
   const filtered = filter === 'all' ? plays : plays.filter(p => p.category === filter);
 
   function handleLoad(play: { phases: unknown[]; sport: string }) {
     loadPlay(play.phases as Phase[], play.sport as 'gaa' | 'hurling' | 'soccer');
     window.location.href = '/board';
+  }
+
+  async function handleDuplicate(playId: string) {
+    setDuplicating(playId);
+    try {
+      await duplicatePlay(playId);
+    } finally {
+      setDuplicating(null);
+    }
   }
 
   return (
@@ -67,50 +79,65 @@ export default function PlaybookPage() {
             {filtered.map(play => (
               <div
                 key={play.id}
-                className="flex items-center justify-between p-4 rounded-xl"
+                className="flex flex-col p-4 rounded-xl"
                 style={{ background: 'var(--bg2)', border: '1px solid var(--bdr)' }}
               >
-                <div>
-                  <p className="font-medium" style={{ color: 'var(--txt)' }}>{play.name}</p>
-                  <p className="text-xs mt-0.5" style={{ color: 'var(--txt2)' }}>
-                    {play.category} · {play.sport?.toUpperCase()} · {(play.phases as unknown[]).length} phase{(play.phases as unknown[]).length !== 1 ? 's' : ''}
-                  </p>
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => handleLoad(play)}
-                    className="px-3 py-1.5 rounded-lg text-xs font-medium"
-                    style={{ background: 'var(--acc)', color: '#0b0f18' }}
-                  >
-                    Load
-                  </button>
-                  {confirmDelete === play.id ? (
-                    <>
+                <div className="flex items-start justify-between mb-2">
+                  <div className="flex-1">
+                    <p className="font-medium" style={{ color: 'var(--txt)' }}>{play.name}</p>
+                    <p className="text-xs mt-0.5" style={{ color: 'var(--txt2)' }}>
+                      {play.category} · {play.sport?.toUpperCase()} · {(play.phases as unknown[]).length} phase{(play.phases as unknown[]).length !== 1 ? 's' : ''}
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleLoad(play)}
+                      className="px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap"
+                      style={{ background: 'var(--acc)', color: '#0b0f18' }}
+                    >
+                      Load
+                    </button>
+                    <button
+                      onClick={() => handleDuplicate(play.id)}
+                      disabled={duplicating === play.id}
+                      className="px-3 py-1.5 rounded-lg text-xs whitespace-nowrap disabled:opacity-60"
+                      style={{ background: 'var(--bg3)', color: 'var(--txt2)' }}
+                    >
+                      {duplicating === play.id ? 'Copying...' : 'Duplicate'}
+                    </button>
+                    {confirmDelete === play.id ? (
+                      <>
+                        <button
+                          onClick={() => { deletePlay(play.id); setConfirmDelete(null); }}
+                          className="px-3 py-1.5 rounded-lg text-xs font-medium"
+                          style={{ background: '#ef4444', color: '#fff' }}
+                        >
+                          Confirm
+                        </button>
+                        <button
+                          onClick={() => setConfirmDelete(null)}
+                          className="px-3 py-1.5 rounded-lg text-xs"
+                          style={{ color: 'var(--txt2)' }}
+                        >
+                          Cancel
+                        </button>
+                      </>
+                    ) : (
                       <button
-                        onClick={() => { deletePlay(play.id); setConfirmDelete(null); }}
-                        className="px-3 py-1.5 rounded-lg text-xs font-medium"
-                        style={{ background: '#ef4444', color: '#fff' }}
-                      >
-                        Confirm
-                      </button>
-                      <button
-                        onClick={() => setConfirmDelete(null)}
+                        onClick={() => setConfirmDelete(play.id)}
                         className="px-3 py-1.5 rounded-lg text-xs"
                         style={{ color: 'var(--txt2)' }}
                       >
-                        Cancel
+                        Delete
                       </button>
-                    </>
-                  ) : (
-                    <button
-                      onClick={() => setConfirmDelete(play.id)}
-                      className="px-3 py-1.5 rounded-lg text-xs"
-                      style={{ color: 'var(--txt2)' }}
-                    >
-                      Delete
-                    </button>
-                  )}
+                    )}
+                  </div>
                 </div>
+                {play.notes && (
+                  <p className="text-xs mt-2 line-clamp-2 max-w-lg" style={{ color: 'var(--txt2)' }}>
+                    {play.notes}
+                  </p>
+                )}
               </div>
             ))}
           </div>

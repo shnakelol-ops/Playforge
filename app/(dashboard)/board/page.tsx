@@ -22,9 +22,9 @@ export default function BoardPage() {
   const { phases, sport, mode } = useBoardStore();
   const { savePlay } = usePlaybook();
 
-  async function handleSave(name: string, category: string) {
+  async function handleSave(name: string, category: string, notes?: string) {
     try {
-      await savePlay(name, category, sport, phases as unknown[]);
+      await savePlay(name, category, sport, phases as unknown[], notes);
       setCurrentPlayName(name);
     } catch (err) {
       if (err instanceof Error && err.message === 'FREE_LIMIT') {
