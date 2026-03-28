@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { X } from 'lucide-react';
+import { useBoardStore } from '@/lib/store';
 import SquadPanel from './SquadPanel';
 
 type SidebarTab = 'squad' | 'items' | 'zones' | 'notes';
@@ -13,7 +14,9 @@ interface Props {
 
 export default function Sidebar({ isOpen, onClose }: Props) {
   const [activeTab, setActiveTab] = useState<SidebarTab>('squad');
-  const [notes, setNotes] = useState('');
+  const { phases, currentPhase, setPhaseNotes } = useBoardStore();
+  const phase = phases[currentPhase];
+  const notes = phase.notes ?? '';
 
   const tabs: Array<{ id: SidebarTab; label: string; icon: string }> = [
     { id: 'squad', label: 'Squad', icon: '👥' },
@@ -100,7 +103,7 @@ export default function Sidebar({ isOpen, onClose }: Props) {
               <textarea
                 placeholder="Add coaching notes for this phase..."
                 value={notes}
-                onChange={e => setNotes(e.target.value)}
+                onChange={e => setPhaseNotes(currentPhase, e.target.value)}
                 className="textarea w-full"
               />
             )}
@@ -137,7 +140,7 @@ export default function Sidebar({ isOpen, onClose }: Props) {
               <textarea
                 placeholder="Add coaching notes..."
                 value={notes}
-                onChange={e => setNotes(e.target.value)}
+                onChange={e => setPhaseNotes(currentPhase, e.target.value)}
                 className="textarea w-full"
               />
             )}

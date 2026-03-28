@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useBoardStore } from '@/lib/store';
 import type { InteractionMode, RunStyle, Sport } from '@/lib/pitch-config';
 import { INK_COLORS } from '@/lib/pitch-config';
+import { TEAM_COLORS, CANVAS_COLORS } from '@/lib/team-colors';
 
 const sports: { value: Sport; label: string }[] = [
   { value: 'gaa', label: 'Gaelic Football' },
@@ -50,7 +51,7 @@ export default function Toolbar({ onSave, onShare, onBench, onSidebar }: { onSav
     >
       {/* Logo */}
       <span className="font-display text-xl tracking-widest shrink-0" style={{ color: 'var(--acc)' }}>
-        PLAYFORGE
+        PITCHSIDE
       </span>
 
       <div className="w-px h-6 shrink-0" style={{ background: 'var(--bdr)' }} />
@@ -100,8 +101,8 @@ export default function Toolbar({ onSave, onShare, onBench, onSidebar }: { onSav
           onClick={() => setShowHome(!showHome)}
           className="px-3 py-1 rounded-md text-xs font-medium transition-all flex items-center gap-1"
           style={{
-            background: '#00e07a',
-            color: '#0b0f18',
+            background: TEAM_COLORS.home.fill,
+            color: CANVAS_COLORS.ui.darkText,
             opacity: showHome ? 1 : 0.5,
           }}
         >
@@ -112,8 +113,8 @@ export default function Toolbar({ onSave, onShare, onBench, onSidebar }: { onSav
           onClick={() => setShowAway(!showAway)}
           className="px-3 py-1 rounded-md text-xs font-medium transition-all flex items-center gap-1"
           style={{
-            background: '#f5a623',
-            color: '#0b0f18',
+            background: TEAM_COLORS.away.fill,
+            color: CANVAS_COLORS.ui.darkText,
             opacity: showAway ? 1 : 0.5,
           }}
         >

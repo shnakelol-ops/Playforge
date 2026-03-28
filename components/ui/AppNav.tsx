@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LogOut, Settings } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 
 export default function AppNav() {
@@ -48,9 +48,6 @@ export default function AppNav() {
           <span className="text-sm" style={{ color: 'var(--txt2)' }}>
             {user?.email?.split('@')[0]}
           </span>
-          <button className="p-2 rounded-lg transition-colors" style={{ background: 'var(--bg3)', color: 'var(--txt2)' }}>
-            <Settings size={18} />
-          </button>
           <button
             onClick={() => signOut()}
             className="p-2 rounded-lg transition-colors"

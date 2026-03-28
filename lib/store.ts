@@ -70,6 +70,7 @@ export interface Phase {
   trainingItems?: TrainingItem[];
   inkStrokes?: FreehandStroke[];
   textLabels?: TextLabel[];
+  notes?: string;
 }
 
 interface BoardStore {
@@ -144,6 +145,7 @@ interface BoardStore {
   updateTextLabelText: (phaseIndex: number, id: string, text: string) => void;
   removeTextLabel: (phaseIndex: number, id: string) => void;
   setPlayerName: (team: 'home' | 'away', playerId: number, name: string) => void;
+  setPhaseNotes: (phaseIndex: number, notes: string) => void;
   loadPlay: (phases: Phase[], sport: Sport) => void;
   resetBoard: (sport: Sport) => void;
 }
@@ -221,6 +223,12 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
         [team]: { ...playerNames[team], [playerId]: name },
       },
     });
+  },
+
+  setPhaseNotes: (phaseIndex, notes) => {
+    const phases = [...get().phases];
+    phases[phaseIndex] = { ...phases[phaseIndex], notes };
+    set({ phases });
   },
 
   addPhase: () => {
