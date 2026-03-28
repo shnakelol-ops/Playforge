@@ -1,6 +1,6 @@
 {
-  "name": "PlayForge",
-  "short_name": "PlayForge",
+  "name": "Pitchside",
+  "short_name": "Pitchside",
   "description": "Professional tactics platform for Gaelic Football, Hurling, and Soccer coaches",
   "start_url": "/board",
   "display": "standalone",

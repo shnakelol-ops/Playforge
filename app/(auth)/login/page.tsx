@@ -32,7 +32,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex flex-col items-center justify-center px-6" style={{ background: 'var(--bg)' }}>
       <div className="w-full max-w-sm p-8 rounded-2xl mb-8" style={{ background: 'var(--bg2)', border: '1px solid var(--bdr)' }}>
         <h1 className="text-2xl font-bold mb-2" style={{ color: 'var(--txt)' }}>Welcome back</h1>
-        <p className="text-sm mb-6" style={{ color: 'var(--txt2)' }}>Sign in to PlayForge</p>
+        <p className="text-sm mb-6" style={{ color: 'var(--txt2)' }}>Sign in to Pitchside</p>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input
@@ -83,7 +83,7 @@ export default function LoginPage() {
       </div>
 
       <footer className="text-center text-xs max-w-sm" style={{ color: 'var(--txt2)', marginTop: 'auto', paddingBottom: '2rem' }}>
-        PlayForge is an independent coaching tool and is not affiliated with, endorsed by, or connected to the GAA, the FAI, or any sporting governing body.
+        Pitchside is an independent coaching tool and is not affiliated with, endorsed by, or connected to the GAA, the FAI, or any sporting governing body.
       </footer>
     </div>
   );

@@ -14,7 +14,7 @@ function generateWhatsAppMessage(playName: string, sport: string, phases: Phase[
     hurling: 'Hurling',
     soccer: 'Soccer',
   };
-  let msg = `*PlayForge* — ${sportLabel[sport] ?? sport}\n\n`;
+  let msg = `*Pitchside* — ${sportLabel[sport] ?? sport}\n\n`;
   msg += `*Play: ${playName}*\n`;
   msg += `Phases: ${phases.length}\n\n`;
 
@@ -34,7 +34,7 @@ function generateWhatsAppMessage(playName: string, sport: string, phases: Phase[
     msg += '\n';
   });
 
-  msg += `Created with PlayForge — Independent coaching tools for Gaelic and Soccer coaches — playforge.app`;
+  msg += `Created with Pitchside — Independent coaching tools for Gaelic and Soccer coaches — pitchside.app`;
   return msg;
 }
 
@@ -48,7 +48,7 @@ export default function ShareModal({ playName, onClose }: Props) {
   }
 
   function copyLink() {
-    navigator.clipboard.writeText('https://playforge.app');
+    navigator.clipboard.writeText('https://pitchside.app');
   }
 
   return (

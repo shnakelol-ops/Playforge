@@ -7,7 +7,7 @@ export default function CookieConsent() {
 
   useEffect(() => {
     // Check if user has already dismissed the cookie notice
-    const cookieConsent = localStorage.getItem('playforge-cookie-consent');
+    const cookieConsent = localStorage.getItem('pitchside-cookie-consent');
     if (!cookieConsent) {
       setIsVisible(true);
     }
@@ -15,9 +15,9 @@ export default function CookieConsent() {
 
   function handleAccept() {
     // Set a cookie and localStorage to remember the consent
-    localStorage.setItem('playforge-cookie-consent', 'accepted');
+    localStorage.setItem('pitchside-cookie-consent', 'accepted');
     // Also set an actual cookie
-    document.cookie = 'playforge-cookie-consent=accepted; path=/; max-age=' + (365 * 24 * 60 * 60);
+    document.cookie = 'pitchside-cookie-consent=accepted; path=/; max-age=' + (365 * 24 * 60 * 60);
     setIsVisible(false);
   }
 
@@ -33,7 +33,7 @@ export default function CookieConsent() {
         style={{ background: 'var(--bg2)', border: '1px solid var(--bdr)' }}
       >
         <p className="text-sm" style={{ color: 'var(--txt2)' }}>
-          PlayForge uses essential cookies only to keep you logged in. No tracking or advertising cookies are used.
+          Pitchside uses essential cookies only to keep you logged in. No tracking or advertising cookies are used.
         </p>
         <button
           onClick={handleAccept}

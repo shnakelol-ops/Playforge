@@ -19,14 +19,14 @@ export default function TermsPage() {
           <section className="mb-8">
             <h2 className="text-2xl font-semibold mb-4" style={{ color: 'var(--txt)' }}>1. Service Description</h2>
             <p className="mb-4">
-              PlayForge is a software tool designed for coaching use only. It enables coaches to create, animate, and share tactical plays for Gaelic Football, Hurling, and Soccer.
+              Pitchside is a software tool designed for coaching use only. It enables coaches to create, animate, and share tactical plays for Gaelic Football, Hurling, and Soccer.
             </p>
           </section>
 
           <section className="mb-8">
             <h2 className="text-2xl font-semibold mb-4" style={{ color: 'var(--txt)' }}>2. User Content Ownership</h2>
             <p className="mb-4">
-              <strong>You retain full ownership</strong> of all content you create using PlayForge, including:
+              <strong>You retain full ownership</strong> of all content you create using Pitchside, including:
             </p>
             <ul className="list-disc list-inside space-y-2 mb-4">
               <li>Plays and playbooks you design</li>
@@ -34,14 +34,14 @@ export default function TermsPage() {
               <li>Any annotations or notes you add</li>
             </ul>
             <p className="mb-4">
-              PlayForge makes no claim to ownership or intellectual property rights over your user-created content.
+              Pitchside makes no claim to ownership or intellectual property rights over your user-created content.
             </p>
           </section>
 
           <section className="mb-8">
             <h2 className="text-2xl font-semibold mb-4" style={{ color: 'var(--txt)' }}>3. License to Use</h2>
             <p className="mb-4">
-              By using PlayForge, you grant us a non-exclusive, worldwide license to store, retrieve, and display your content as necessary to provide the service. This license does not grant us the right to sell, modify, or redistribute your content.
+              By using Pitchside, you grant us a non-exclusive, worldwide license to store, retrieve, and display your content as necessary to provide the service. This license does not grant us the right to sell, modify, or redistribute your content.
             </p>
           </section>
 
@@ -57,7 +57,7 @@ export default function TermsPage() {
               <li>WhatsApp sharing</li>
             </ul>
             <p className="mb-4">
-              PlayForge reserves the right to modify or discontinue the Free plan with 30 days&apos; notice.
+              Pitchside reserves the right to modify or discontinue the Free plan with 30 days&apos; notice.
             </p>
           </section>
 
@@ -95,7 +95,7 @@ export default function TermsPage() {
           <section className="mb-8">
             <h2 className="text-2xl font-semibold mb-4" style={{ color: 'var(--txt)' }}>7. Prohibited Uses</h2>
             <p className="mb-4">
-              You agree not to use PlayForge for:
+              You agree not to use Pitchside for:
             </p>
             <ul className="list-disc list-inside space-y-2 mb-4">
               <li>Any illegal activities or purposes</li>
@@ -110,7 +110,7 @@ export default function TermsPage() {
           <section className="mb-8">
             <h2 className="text-2xl font-semibold mb-4" style={{ color: 'var(--txt)' }}>8. Account Termination</h2>
             <p className="mb-4">
-              PlayForge reserves the right to suspend or terminate your account if:
+              Pitchside reserves the right to suspend or terminate your account if:
             </p>
             <ul className="list-disc list-inside space-y-2 mb-4">
               <li>You violate these Terms of Service</li>
@@ -126,7 +126,7 @@ export default function TermsPage() {
           <section className="mb-8">
             <h2 className="text-2xl font-semibold mb-4" style={{ color: 'var(--txt)' }}>9. Disclaimer of Warranties</h2>
             <p className="mb-4">
-              PlayForge is provided &quot;as is&quot; without warranties of any kind. We make no guarantee that:
+              Pitchside is provided &quot;as is&quot; without warranties of any kind. We make no guarantee that:
             </p>
             <ul className="list-disc list-inside space-y-2 mb-4">
               <li>The service will be uninterrupted or error-free</li>
@@ -138,13 +138,13 @@ export default function TermsPage() {
           <section className="mb-8">
             <h2 className="text-2xl font-semibold mb-4" style={{ color: 'var(--txt)' }}>10. Limitation of Liability</h2>
             <p className="mb-4">
-              PlayForge and its creators shall not be liable for:
+              Pitchside and its creators shall not be liable for:
             </p>
             <ul className="list-disc list-inside space-y-2 mb-4">
               <li>Loss of data or content</li>
               <li>Loss of revenue or profits</li>
               <li>Indirect or consequential damages</li>
-              <li>Results or outcomes from using tactics created in PlayForge</li>
+              <li>Results or outcomes from using tactics created in Pitchside</li>
             </ul>
             <p className="mb-4">
               Our total liability shall not exceed the amount you have paid us in the past 12 months.
@@ -164,7 +164,7 @@ export default function TermsPage() {
           <section className="mb-8">
             <h2 className="text-2xl font-semibold mb-4" style={{ color: 'var(--txt)' }}>12. Dispute Resolution</h2>
             <p className="mb-4">
-              Before initiating legal proceedings, users and PlayForge agree to attempt to resolve disputes through good-faith negotiation. If negotiation fails, disputes will be resolved by the Irish courts.
+              Before initiating legal proceedings, users and Pitchside agree to attempt to resolve disputes through good-faith negotiation. If negotiation fails, disputes will be resolved by the Irish courts.
             </p>
           </section>
 
@@ -181,7 +181,7 @@ export default function TermsPage() {
           <section className="mb-8">
             <h2 className="text-2xl font-semibold mb-4" style={{ color: 'var(--txt)' }}>14. Changes to Terms</h2>
             <p className="mb-4">
-              We may update these Terms of Service at any time. Significant changes will be communicated to you via email. Your continued use of PlayForge after changes constitutes acceptance of the updated Terms.
+              We may update these Terms of Service at any time. Significant changes will be communicated to you via email. Your continued use of Pitchside after changes constitutes acceptance of the updated Terms.
             </p>
           </section>
         </div>

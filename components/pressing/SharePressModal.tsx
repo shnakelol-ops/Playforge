@@ -34,7 +34,7 @@ export default function SharePressModal({ onClose }: Props) {
   const generateShareText = () => {
     const lines: string[] = [];
 
-    lines.push('*PlayForge — Pressing System*');
+    lines.push('*Pitchside — Pressing System*');
     lines.push(`Schema: ${name || 'Unnamed'} | Sport: ${sport.toUpperCase()}`);
     lines.push('');
 
@@ -69,7 +69,7 @@ export default function SharePressModal({ onClose }: Props) {
     }
     lines.push('');
 
-    lines.push('Created with PlayForge');
+    lines.push('Created with Pitchside');
 
     return lines.join('\n');
   };
@@ -81,7 +81,7 @@ export default function SharePressModal({ onClose }: Props) {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: `PlayForge — ${name || 'Pressing Schema'}`,
+          title: `Pitchside — ${name || 'Pressing Schema'}`,
           text: shareText,
         });
         onClose();

@@ -19,7 +19,7 @@ export default function PrivacyPage() {
           <section className="mb-8">
             <h2 className="text-2xl font-semibold mb-4" style={{ color: 'var(--txt)' }}>What data we collect</h2>
             <p className="mb-4">
-              PlayForge collects and stores the following information:
+              Pitchside collects and stores the following information:
             </p>
             <ul className="list-disc list-inside space-y-2 mb-4">
               <li>Your name (provided at registration)</li>
@@ -35,7 +35,7 @@ export default function PrivacyPage() {
               We collect this data to:
             </p>
             <ul className="list-disc list-inside space-y-2 mb-4">
-              <li>Provide the PlayForge coaching tool service</li>
+              <li>Provide the Pitchside coaching tool service</li>
               <li>Store and retrieve your saved plays and playbooks</li>
               <li>Authenticate your account and maintain your session</li>
               <li>Personalize your experience (remembering your preferred sport)</li>
@@ -77,21 +77,21 @@ export default function PrivacyPage() {
           <section className="mb-8">
             <h2 className="text-2xl font-semibold mb-4" style={{ color: 'var(--txt)' }}>Data sharing</h2>
             <p className="mb-4">
-              PlayForge will never sell, rent, or share your personal data with third parties. Your coaching content (plays and playbooks) is only shared if you explicitly choose to share it via WhatsApp or other sharing features.
+              Pitchside will never sell, rent, or share your personal data with third parties. Your coaching content (plays and playbooks) is only shared if you explicitly choose to share it via WhatsApp or other sharing features.
             </p>
           </section>
 
           <section className="mb-8">
             <h2 className="text-2xl font-semibold mb-4" style={{ color: 'var(--txt)' }}>Cookies</h2>
             <p className="mb-4">
-              PlayForge uses only essential functional cookies to maintain your login session. We do not use tracking cookies, advertising cookies, or any analytics cookies that could identify you. A consent notice appears on your first visit.
+              Pitchside uses only essential functional cookies to maintain your login session. We do not use tracking cookies, advertising cookies, or any analytics cookies that could identify you. A consent notice appears on your first visit.
             </p>
           </section>
 
           <section className="mb-8">
             <h2 className="text-2xl font-semibold mb-4" style={{ color: 'var(--txt)' }}>GDPR compliance</h2>
             <p className="mb-4">
-              PlayForge fully complies with:
+              Pitchside fully complies with:
             </p>
             <ul className="list-disc list-inside space-y-2 mb-4">
               <li>EU General Data Protection Regulation (GDPR)</li>
@@ -115,7 +115,7 @@ export default function PrivacyPage() {
           <section className="mb-8">
             <h2 className="text-2xl font-semibold mb-4" style={{ color: 'var(--txt)' }}>Changes to this policy</h2>
             <p>
-              We may update this privacy policy from time to time. Material changes will be communicated to you via email. Your continued use of PlayForge after changes indicates your acceptance of the updated policy.
+              We may update this privacy policy from time to time. Material changes will be communicated to you via email. Your continued use of Pitchside after changes indicates your acceptance of the updated policy.
             </p>
           </section>
         </div>

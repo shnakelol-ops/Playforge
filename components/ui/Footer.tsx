@@ -16,7 +16,7 @@ export default function Footer() {
               The professional tactics platform for Gaelic Football, Hurling, and Soccer coaches.
             </p>
             <p className="text-xs mt-4" style={{ color: 'var(--txt3)' }}>
-              © 2025 PlayForge. All rights reserved.
+              © 2025 Pitchside. All rights reserved.
             </p>
           </div>
 
@@ -77,7 +77,7 @@ export default function Footer() {
         {/* Disclaimer */}
         <div className="border-t border-solid pt-8" style={{ borderColor: 'var(--bdr)' }}>
           <p className="text-xs" style={{ color: 'var(--txt3)' }}>
-            <strong>Important Disclaimer:</strong> PlayForge is not affiliated with, endorsed by, or associated with the GAA (Gaelic Athletic Association), the FAI (Football Association of Ireland), hurling governing bodies, or any other sporting governing organization. PlayForge is an independent coaching software platform created to help coaches create, visualize, and share tactical strategies.
+            <strong>Important Disclaimer:</strong> Pitchside is not affiliated with, endorsed by, or associated with the GAA (Gaelic Athletic Association), the FAI (Football Association of Ireland), hurling governing bodies, or any other sporting governing organization. Pitchside is an independent coaching software platform created to help coaches create, visualize, and share tactical strategies.
           </p>
         </div>
       </div>

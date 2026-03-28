@@ -8,7 +8,7 @@ const bebasNeue = Bebas_Neue({ subsets: ['latin'], weight: '400', variable: '--f
 const dmMono = DM_Mono({ subsets: ['latin'], weight: ['400', '500'], variable: '--font-dm-mono' });
 
 export const metadata: Metadata = {
-  title: 'PlayForge — Gaelic & Soccer Tactics Platform',
+  title: 'Pitchside — Gaelic & Soccer Tactics Platform',
   description: 'The professional tactics platform for Gaelic Football, Hurling, and Soccer coaches. Draw plays, animate movements, share with your team.',
   manifest: '/manifest.json',
 };

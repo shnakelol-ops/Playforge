@@ -150,7 +150,7 @@ export default function RegisterPage() {
       </div>
 
       <footer className="text-center text-xs max-w-sm" style={{ color: 'var(--txt2)', marginTop: 'auto', paddingBottom: '2rem' }}>
-        PlayForge is an independent coaching tool and is not affiliated with, endorsed by, or connected to the GAA, the FAI, or any sporting governing body.
+        Pitchside is an independent coaching tool and is not affiliated with, endorsed by, or connected to the GAA, the FAI, or any sporting governing body.
       </footer>
     </div>
   );
