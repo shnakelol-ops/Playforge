@@ -65,6 +65,7 @@ export default function RegisterPage() {
               onChange={e => setFullName(e.target.value)}
               required
               className="input w-full"
+              style={{ background: 'var(--bg3)', color: 'var(--txt)', border: '1px solid var(--bdr)' }}
             />
           </div>
           <div>
@@ -76,6 +77,7 @@ export default function RegisterPage() {
               onChange={e => setEmail(e.target.value)}
               required
               className="input w-full"
+              style={{ background: 'var(--bg3)', color: 'var(--txt)', border: '1px solid var(--bdr)' }}
             />
           </div>
           <div>
@@ -88,6 +90,7 @@ export default function RegisterPage() {
               minLength={6}
               required
               className="input w-full"
+              style={{ background: 'var(--bg3)', color: 'var(--txt)', border: '1px solid var(--bdr)' }}
             />
             <p className="text-xs mt-1" style={{ color: 'var(--txt2)' }}>Minimum 6 characters</p>
           </div>
@@ -130,7 +133,8 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={loading}
-            className="btn btn-primary w-full mt-4"
+            className="w-full py-3 rounded-lg font-semibold text-sm transition-opacity disabled:opacity-60 mt-4"
+            style={{ background: 'var(--acc)', color: '#0b0f18' }}
           >
             {loading ? 'Creating account...' : 'Create account'}
           </button>

@@ -44,6 +44,7 @@ export default function LoginPage() {
               onChange={e => setEmail(e.target.value)}
               required
               className="input w-full"
+              style={{ background: 'var(--bg3)', color: 'var(--txt)', border: '1px solid var(--bdr)' }}
             />
           </div>
           <div>
@@ -55,13 +56,15 @@ export default function LoginPage() {
               onChange={e => setPassword(e.target.value)}
               required
               className="input w-full"
+              style={{ background: 'var(--bg3)', color: 'var(--txt)', border: '1px solid var(--bdr)' }}
             />
           </div>
           {error && <p className="text-red-400 text-sm p-3 rounded-lg" style={{ background: 'rgba(239, 68, 68, 0.1)' }}>{error}</p>}
           <button
             type="submit"
             disabled={loading}
-            className="btn btn-primary w-full mt-2"
+            className="w-full py-3 rounded-lg font-semibold text-sm transition-opacity disabled:opacity-60"
+            style={{ background: 'var(--acc)', color: '#0b0f18' }}
           >
             {loading ? 'Signing in...' : 'Sign in'}
           </button>
@@ -75,7 +78,7 @@ export default function LoginPage() {
             </Link>
           </p>
           <p style={{ color: 'var(--txt2)' }}>
-            <Link href="#" style={{ color: 'var(--txt2)' }} className="hover:text-accent transition-colors">
+            <Link href="#" style={{ color: 'var(--txt2)' }} className="transition-colors hover:opacity-80">
               Forgot password?
             </Link>
           </p>
