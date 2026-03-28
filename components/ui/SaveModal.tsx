@@ -22,15 +22,22 @@ export default function SaveModal({ onClose, onSave }: Props) {
   const [customCategory, setCustomCategory] = useState('');
   const [notes, setNotes] = useState('');
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const finalCategory = customCategory.trim() || category;
 
   async function handleSave() {
     if (!name.trim()) return;
     setSaving(true);
-    await onSave(name.trim(), finalCategory, notes.trim() || undefined);
-    setSaving(false);
-    onClose();
+    setError(null);
+    try {
+      await onSave(name.trim(), finalCategory, notes.trim() || undefined);
+      onClose();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to save. Please try again.');
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -91,6 +98,12 @@ export default function SaveModal({ onClose, onSave }: Props) {
           <p className="text-xs" style={{ color: 'var(--txt2)' }}>
             {phases.length} phase{phases.length !== 1 ? 's' : ''} · {sport.toUpperCase()}
           </p>
+
+          {error && (
+            <p className="text-xs px-3 py-2 rounded-lg" style={{ background: 'rgba(239,68,68,0.15)', color: 'var(--red)', border: '1px solid rgba(239,68,68,0.3)' }}>
+              {error}
+            </p>
+          )}
 
           <div className="flex gap-2">
             <button

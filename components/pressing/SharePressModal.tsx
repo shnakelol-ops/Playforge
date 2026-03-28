@@ -21,10 +21,10 @@ const POST_PRESS_LABELS = {
 };
 
 const ROLE_LABELS = {
-  firstPresser: 'First Presser',
-  coverShadow: 'Cover Shadow',
-  holdShape: 'Hold Shape',
-  pressTrigger: 'Press Trigger',
+  firstPresser: 'First Presser (P)',
+  coverShadow: 'Cover Shadow (S)',
+  holdShape: 'Hold Shape (H)',
+  pressTrigger: 'Press Trigger (T)',
 };
 
 export default function SharePressModal({ onClose }: Props) {
@@ -34,7 +34,7 @@ export default function SharePressModal({ onClose }: Props) {
   const generateShareText = () => {
     const lines: string[] = [];
 
-    lines.push('*Pitchside — Pressing System*');
+    lines.push('*Pressing System*');
     lines.push(`Schema: ${name || 'Unnamed'} | Sport: ${sport.toUpperCase()}`);
     lines.push('');
 
@@ -44,18 +44,22 @@ export default function SharePressModal({ onClose }: Props) {
 
     // Triggers
     lines.push(`TRIGGERS (${activeTriggers.length} active):`);
-    activeTriggers.forEach(triggerId => {
-      const trigger = getTriggerById(triggerId);
-      if (trigger) {
-        lines.push(`  • ${trigger.label}${trigger.description ? ` — ${trigger.description}` : ''}`);
-      }
-    });
+    if (activeTriggers.length === 0) {
+      lines.push('  None selected');
+    } else {
+      activeTriggers.forEach(triggerId => {
+        const trigger = getTriggerById(triggerId);
+        if (trigger) {
+          lines.push(`  • ${trigger.label}${trigger.description ? ` — ${trigger.description}` : ''}`);
+        }
+      });
+    }
     lines.push('');
 
-    // Roles
+    // Player roles
     const rolesWithAssignments = Object.entries(playerRoles);
     if (rolesWithAssignments.length > 0) {
-      lines.push('ROLES:');
+      lines.push('PLAYER ROLES:');
       rolesWithAssignments.forEach(([playerId, role]) => {
         lines.push(`  #${playerId} — ${ROLE_LABELS[role as keyof typeof ROLE_LABELS]}`);
       });
@@ -69,33 +73,19 @@ export default function SharePressModal({ onClose }: Props) {
     }
     lines.push('');
 
-    lines.push('Created with Pitchside');
+    lines.push('Shared via Pitchside — pitchside.fyi');
 
     return lines.join('\n');
   };
 
   const shareText = generateShareText();
 
-  const handleShare = async () => {
-    // Try native share first
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: `Pitchside — ${name || 'Pressing Schema'}`,
-          text: shareText,
-        });
-        onClose();
-        return;
-      } catch {
-        // User cancelled, fall through to WhatsApp
-      }
-    }
-
-    // Fallback to WhatsApp
+  // Synchronous handler — window.open must be called directly in user gesture
+  function handleShare() {
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
     window.open(whatsappUrl, '_blank');
     onClose();
-  };
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.7)' }}>

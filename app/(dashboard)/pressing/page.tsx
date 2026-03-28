@@ -21,19 +21,41 @@ interface Section {
 }
 
 const SECTIONS: Section[] = [
-  { number: 1, title: 'WHERE', subtitle: 'Define your pressing zones' },
+  { number: 1, title: 'WHERE', subtitle: 'Define your pressing zone' },
   { number: 2, title: 'WHO', subtitle: 'Assign player roles' },
   { number: 3, title: 'WHEN', subtitle: 'Select triggering situations' },
-  { number: 4, title: 'WHAT DOES IT LOOK LIKE', subtitle: 'Show the press movement' },
-  { number: 5, title: 'POST-PRESS', subtitle: 'Recovery strategy' },
+  { number: 4, title: 'ANIMATION', subtitle: 'Show the press movement' },
+  { number: 5, title: 'AFTER', subtitle: 'Post-press recovery strategy' },
 ];
 
+type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
+
 export default function PressingPage() {
-  const { name, sport, setName, setSport, currentSection, selectSection, reset } = usePressStore();
+  const {
+    name, sport, setName, setSport, currentSection, selectSection, reset,
+    playerRoles, activeTriggers, pressPhases,
+  } = usePressStore();
   const { saveSchema, loading: saving } = usePressSchemas();
   const [showShare, setShowShare] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
+  const [saveError, setSaveError] = useState('');
+
+  /** Returns true when a section has been meaningfully configured */
+  function isSectionComplete(num: 1 | 2 | 3 | 4 | 5): boolean {
+    switch (num) {
+      case 1: return true; // Zone always has a selection
+      case 2: return Object.keys(playerRoles).length > 0;
+      case 3: return activeTriggers.length > 0;
+      case 4: return pressPhases.some(phase =>
+        phase.playerTargets.some(t => t.endRx !== t.startRx || t.endRy !== t.startRy));
+      case 5: return true; // Always has a post-press option
+      default: return false;
+    }
+  }
 
   async function handleSave() {
+    setSaveStatus('saving');
+    setSaveError('');
     try {
       const state = usePressStore.getState();
       await saveSchema({
@@ -45,17 +67,27 @@ export default function PressingPage() {
         pressPhases: state.pressPhases,
         postPress: state.postPress,
       });
-      // Toast: saved successfully
+      setSaveStatus('saved');
+      // Reset status after 2 seconds
+      setTimeout(() => setSaveStatus('idle'), 2000);
     } catch (err) {
-      console.error('Failed to save schema:', err);
+      const msg = err instanceof Error ? err.message : 'Failed to save schema';
+      setSaveError(msg);
+      setSaveStatus('error');
     }
+  }
+
+  function getSaveButtonLabel() {
+    if (saving || saveStatus === 'saving') return 'Saving...';
+    if (saveStatus === 'saved') return 'Saved ✓';
+    return 'Save';
   }
 
   return (
     <div className="min-h-screen flex flex-col md:pb-0 pb-20" style={{ background: 'var(--bg)' }}>
       <AppNav />
 
-      <div className="max-w-2xl mx-auto p-6 flex-1">
+      <div className="max-w-2xl mx-auto w-full p-6 flex-1">
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-2xl font-bold mb-4" style={{ color: 'var(--txt)' }}>
@@ -89,14 +121,17 @@ export default function PressingPage() {
             </div>
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
             <button
               onClick={handleSave}
-              disabled={saving}
-              className="px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-60"
-              style={{ background: 'var(--acc)', color: '#0b0f18' }}
+              disabled={saving || saveStatus === 'saving'}
+              className="px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-60 transition-all"
+              style={{
+                background: saveStatus === 'saved' ? 'var(--green)' : saveStatus === 'error' ? 'var(--red)' : 'var(--acc)',
+                color: '#0b0f18',
+              }}
             >
-              {saving ? 'Saving...' : 'Save'}
+              {getSaveButtonLabel()}
             </button>
             <button
               onClick={() => setShowShare(true)}
@@ -113,57 +148,80 @@ export default function PressingPage() {
               Reset
             </button>
           </div>
+
+          {saveStatus === 'error' && saveError && (
+            <p className="mt-2 text-xs px-3 py-2 rounded-lg" style={{ background: 'rgba(239,68,68,0.15)', color: 'var(--red)', border: '1px solid rgba(239,68,68,0.3)' }}>
+              {saveError}
+            </p>
+          )}
         </div>
 
         {/* Accordion stepper */}
         <div className="flex flex-col gap-3 mb-8">
-          {SECTIONS.map(section => (
-            <div
-              key={section.number}
-              className="rounded-lg overflow-hidden"
-              style={{ border: '1px solid var(--bdr)' }}
-            >
-              <button
-                onClick={() => selectSection(section.number)}
-                className="w-full flex items-center justify-between p-4 text-left font-medium transition-all"
-                style={{
-                  background: currentSection === section.number ? 'var(--acc)' : 'var(--bg2)',
-                  color: currentSection === section.number ? '#0b0f18' : 'var(--txt)',
-                }}
+          {SECTIONS.map(section => {
+            const isActive = currentSection === section.number;
+            const isDone = !isActive && isSectionComplete(section.number);
+
+            return (
+              <div
+                key={section.number}
+                className="rounded-lg overflow-hidden"
+                style={{ border: `1px solid ${isActive ? 'var(--acc)' : 'var(--bdr)'}` }}
               >
-                <div className="flex items-center gap-3">
-                  <div
-                    className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
-                    style={{
-                      background: currentSection === section.number ? '#0b0f18' : 'var(--bdr)',
-                      color: currentSection === section.number ? 'var(--acc)' : 'var(--txt)',
-                    }}
-                  >
-                    {section.number}
-                  </div>
-                  <div>
-                    <div className="font-semibold">{section.title}</div>
-                    <div className="text-xs" style={{ color: currentSection === section.number ? 'rgba(11,15,24,0.7)' : 'var(--txt2)' }}>
-                      {section.subtitle}
+                <button
+                  onClick={() => selectSection(section.number)}
+                  className="w-full flex items-center justify-between p-4 text-left font-medium transition-all"
+                  style={{
+                    background: isActive ? 'var(--acc)' : 'var(--bg2)',
+                    color: isActive ? '#0b0f18' : 'var(--txt)',
+                  }}
+                >
+                  <div className="flex items-center gap-3">
+                    {/* Step indicator circle */}
+                    <div
+                      className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
+                      style={{
+                        background: isActive
+                          ? '#0b0f18'
+                          : isDone
+                          ? 'var(--acc)'
+                          : 'var(--bdr)',
+                        color: isActive
+                          ? 'var(--acc)'
+                          : isDone
+                          ? '#0b0f18'
+                          : 'var(--txt)',
+                      }}
+                    >
+                      {isDone ? '✓' : section.number}
+                    </div>
+                    <div>
+                      <div className="font-semibold text-sm">{section.title}</div>
+                      <div
+                        className="text-xs"
+                        style={{ color: isActive ? 'rgba(11,15,24,0.65)' : 'var(--txt2)' }}
+                      >
+                        {section.subtitle}
+                      </div>
                     </div>
                   </div>
-                </div>
-                <span style={{ color: currentSection === section.number ? '#0b0f18' : 'var(--txt2)' }}>
-                  {currentSection === section.number ? '▼' : '▶'}
-                </span>
-              </button>
+                  <span style={{ color: isActive ? '#0b0f18' : 'var(--txt2)', fontSize: '10px' }}>
+                    {isActive ? '▼' : '▶'}
+                  </span>
+                </button>
 
-              {currentSection === section.number && (
-                <div className="p-4 border-t" style={{ borderColor: 'var(--bdr)', background: 'var(--bg)' }}>
-                  {section.number === 1 && <ZonePitchCanvas />}
-                  {section.number === 2 && <RolePitchCanvas />}
-                  {section.number === 3 && <TriggerGrid />}
-                  {section.number === 4 && <AnimPitchCanvas />}
-                  {section.number === 5 && <PostPressPanel />}
-                </div>
-              )}
-            </div>
-          ))}
+                {isActive && (
+                  <div className="p-4 border-t" style={{ borderColor: 'var(--bdr)', background: 'var(--bg)' }}>
+                    {section.number === 1 && <ZonePitchCanvas />}
+                    {section.number === 2 && <RolePitchCanvas />}
+                    {section.number === 3 && <TriggerGrid />}
+                    {section.number === 4 && <AnimPitchCanvas />}
+                    {section.number === 5 && <PostPressPanel />}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
 
         {/* Saved schemas */}

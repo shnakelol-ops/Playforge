@@ -8,14 +8,13 @@ import { getDefaultPositions } from '@/lib/pitch-config';
 import type { PressRole } from '@/lib/press-types';
 import type { Sport } from '@/lib/pitch-config';
 
-const CANVAS_HEIGHT = 220;
 const PLAYER_RADIUS = 14;
 
 const ROLE_COLORS: Record<PressRole, { fill: string; badge: string }> = {
-  firstPresser: { fill: '#3b82f6', badge: '#ef4444' },      // blue, red badge
-  coverShadow: { fill: '#3b82f6', badge: '#3b82f6' },      // blue, blue badge
-  holdShape: { fill: '#3b82f6', badge: '#9ca3af' },        // blue, grey badge
-  pressTrigger: { fill: '#3b82f6', badge: '#22c55e' },     // blue, green badge
+  firstPresser: { fill: '#3b82f6', badge: '#ef4444' },   // blue player, red P badge
+  coverShadow:  { fill: '#3b82f6', badge: '#3b82f6' },   // blue player, blue S badge
+  holdShape:    { fill: '#3b82f6', badge: '#9ca3af' },   // blue player, grey H badge
+  pressTrigger: { fill: '#3b82f6', badge: '#22c55e' },   // blue player, green T badge
 };
 
 const ROLE_LABELS: Record<PressRole, string> = {
@@ -32,18 +31,20 @@ export default function RolePitchCanvas() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { sport, playerRoles, setPlayerRole } = usePressStore();
-  const [canvasSize, setCanvasSize] = useState({ w: 0, h: CANVAS_HEIGHT });
+  const [canvasSize, setCanvasSize] = useState({ w: 0, h: 0 });
 
-  const players = getDefaultPositions(sport).home;
+  const players = getDefaultPositions(sport as Sport).home;
 
-  // ResizeObserver for canvas sizing
+  // ResizeObserver — reads both width and height set by aspect-ratio CSS
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
     const observer = new ResizeObserver(() => {
       const rect = container.getBoundingClientRect();
-      setCanvasSize({ w: Math.max(300, rect.width), h: CANVAS_HEIGHT });
+      const w = Math.max(300, rect.width);
+      const h = rect.height > 0 ? rect.height : w * (90 / 145);
+      setCanvasSize({ w, h });
     });
 
     observer.observe(container);
@@ -69,20 +70,20 @@ export default function RolePitchCanvas() {
       const { x: px, y: py } = toPixel(player.rx, player.ry, canvasSize.w, canvasSize.h);
       const role = playerRoles[player.id] || null;
 
-      // Draw player circle
-      ctx.fillStyle = ROLE_COLORS.firstPresser.fill;
+      // Player circle
+      ctx.fillStyle = role ? ROLE_COLORS[role].fill : '#4b5563';
       ctx.beginPath();
       ctx.arc(px, py, PLAYER_RADIUS, 0, Math.PI * 2);
       ctx.fill();
 
-      // Draw player number
+      // Player number (use player.num not player.id)
       ctx.fillStyle = '#ffffff';
       ctx.font = 'bold 10px sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(String(player.id), px, py);
+      ctx.fillText(player.num, px, py);
 
-      // Draw role badge (12x12 circle top-right)
+      // Role badge (circle top-right of player)
       if (role) {
         const badgeX = px + PLAYER_RADIUS - 4;
         const badgeY = py - PLAYER_RADIUS + 4;
@@ -112,7 +113,6 @@ export default function RolePitchCanvas() {
     // Check which player was clicked
     for (const player of players) {
       if (hitTest(px, py, player.rx, player.ry, canvasSize.w, canvasSize.h, PLAYER_RADIUS)) {
-        // Cycle to next role
         const currentRole = playerRoles[player.id] || null;
         const currentIndex = ROLE_CYCLE_ORDER.indexOf(currentRole);
         const nextRole = ROLE_CYCLE_ORDER[(currentIndex + 1) % ROLE_CYCLE_ORDER.length];
@@ -123,21 +123,27 @@ export default function RolePitchCanvas() {
   };
 
   return (
-    <div ref={containerRef} className="w-full">
-      <canvas
-        ref={canvasRef}
-        onClick={handleCanvasClick}
-        className="w-full border border-solid"
-        style={{
-          borderColor: 'var(--bdr)',
-          borderRadius: '0.5rem',
-          cursor: 'pointer',
-          height: `${CANVAS_HEIGHT}px`,
-          display: 'block',
-        }}
-      />
+    <div className="w-full">
+      <div
+        ref={containerRef}
+        style={{ aspectRatio: '145 / 90' }}
+      >
+        <canvas
+          ref={canvasRef}
+          onClick={handleCanvasClick}
+          className="border border-solid"
+          style={{
+            borderColor: 'var(--bdr)',
+            borderRadius: '0.5rem',
+            cursor: 'pointer',
+            display: 'block',
+            width: '100%',
+            height: '100%',
+          }}
+        />
+      </div>
       {/* Legend */}
-      <div className="flex gap-4 mt-3 text-xs" style={{ color: 'var(--txt2)' }}>
+      <div className="flex flex-wrap gap-3 mt-3 text-xs" style={{ color: 'var(--txt2)' }}>
         <div className="flex items-center gap-1">
           <div className="w-2 h-2 rounded-full" style={{ background: '#ef4444' }} />
           <span>P = First Presser</span>
@@ -155,6 +161,9 @@ export default function RolePitchCanvas() {
           <span>T = Press Trigger</span>
         </div>
       </div>
+      <p className="mt-2 text-xs" style={{ color: 'var(--txt2)' }}>
+        Tap a player to cycle through roles. Tap again to clear.
+      </p>
     </div>
   );
 }

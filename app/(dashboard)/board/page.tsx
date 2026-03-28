@@ -32,7 +32,9 @@ export default function BoardPage() {
     } catch (err) {
       if (err instanceof Error && err.message === 'FREE_LIMIT') {
         setShowUpgrade(true);
+        return; // SaveModal closes normally; upgrade modal takes over
       }
+      throw err; // Re-throw Supabase/other errors so SaveModal can display them
     }
   }
 
