@@ -3,6 +3,7 @@
 import { useEffect, useRef, useCallback, useState } from 'react';
 import { useBoardStore } from '@/lib/store';
 import type { Player, FreehandStroke } from '@/lib/store';
+import { easeInOut, toPixel, toRelative, hitTest } from '@/lib/canvas-utils';
 import { drawPitch } from './PitchRenderer';
 import { drawPlayers } from './PlayerLayer';
 import { drawRuns, drawControlPointHandles } from './RunLayer';
@@ -14,25 +15,8 @@ const PLAYER_RADIUS_DESKTOP = 14;
 const PLAYER_RADIUS_MOBILE = 12;
 const BALL_RADIUS = 8;
 
-function easeInOut(t: number): number {
-  return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-}
-
-function toPixel(rx: number, ry: number, w: number, h: number) {
-  return { x: rx * w, y: ry * h };
-}
-
-function toRelative(x: number, y: number, w: number, h: number) {
-  return { rx: x / w, ry: y / h };
-}
-
 function getPlayerRadius(canvas: HTMLCanvasElement) {
   return canvas.width < 600 ? PLAYER_RADIUS_MOBILE : PLAYER_RADIUS_DESKTOP;
-}
-
-function hitTest(px: number, py: number, rx: number, ry: number, w: number, h: number, radius: number) {
-  const { x, y } = toPixel(rx, ry, w, h);
-  return Math.hypot(px - x, py - y) <= radius + 4;
 }
 
 export default function TacticsBoard() {

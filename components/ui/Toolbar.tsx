@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { useBoardStore } from '@/lib/store';
 import type { InteractionMode, RunStyle, Sport } from '@/lib/pitch-config';
 import { INK_COLORS } from '@/lib/pitch-config';
@@ -51,6 +52,26 @@ export default function Toolbar({ onSave, onShare, onBench }: { onSave: () => vo
       <span className="font-display text-xl tracking-widest shrink-0" style={{ color: 'var(--acc)' }}>
         PLAYFORGE
       </span>
+
+      <div className="w-px h-6 shrink-0" style={{ background: 'var(--bdr)' }} />
+
+      {/* Navigation */}
+      <div className="flex gap-2 shrink-0">
+        <Link
+          href="/playbook"
+          className="px-3 py-1 rounded-md text-xs font-medium transition-all"
+          style={{ background: 'var(--bg3)', color: 'var(--txt2)' }}
+        >
+          Playbook
+        </Link>
+        <Link
+          href="/pressing"
+          className="px-3 py-1 rounded-md text-xs font-medium transition-all"
+          style={{ background: 'var(--bg3)', color: 'var(--txt2)' }}
+        >
+          Press
+        </Link>
+      </div>
 
       <div className="w-px h-6 shrink-0" style={{ background: 'var(--bdr)' }} />
 
