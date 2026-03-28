@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import DashboardNav from '@/components/ui/DashboardNav';
+import AppNav from '@/components/ui/AppNav';
 import { usePlaybook } from '@/hooks/usePlaybook';
 import { useBoardStore } from '@/lib/store';
 import type { Phase } from '@/lib/store';
@@ -35,9 +35,9 @@ export default function PlaybookPage() {
   }
 
   return (
-    <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
-      <DashboardNav />
-      <div className="max-w-3xl mx-auto p-6">
+    <div className="min-h-screen flex flex-col md:pb-0 pb-20" style={{ background: 'var(--bg)' }}>
+      <AppNav />
+      <div className="max-w-3xl mx-auto p-6 flex-1">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-2xl font-bold" style={{ color: 'var(--txt)' }}>My Playbook</h1>

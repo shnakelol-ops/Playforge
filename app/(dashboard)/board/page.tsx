@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
+import AppNav from '@/components/ui/AppNav';
 import Toolbar from '@/components/ui/Toolbar';
 import PhaseBar from '@/components/ui/PhaseBar';
 import SaveModal from '@/components/ui/SaveModal';
@@ -35,6 +36,7 @@ export default function BoardPage() {
 
   return (
     <div className="flex flex-col h-screen" style={{ background: 'var(--bg)' }}>
+      <AppNav />
       <Toolbar
         onSave={() => setShowSave(true)}
         onShare={() => setShowShare(true)}

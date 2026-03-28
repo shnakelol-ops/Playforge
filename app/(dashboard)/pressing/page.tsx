@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
-import DashboardNav from '@/components/ui/DashboardNav';
+import AppNav from '@/components/ui/AppNav';
 import ZonePitchCanvas from '@/components/pressing/ZonePitchCanvas';
 import RolePitchCanvas from '@/components/pressing/RolePitchCanvas';
 import TriggerGrid from '@/components/pressing/TriggerGrid';
@@ -52,10 +52,10 @@ export default function PressingPage() {
   }
 
   return (
-    <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
-      <DashboardNav />
+    <div className="min-h-screen flex flex-col md:pb-0 pb-20" style={{ background: 'var(--bg)' }}>
+      <AppNav />
 
-      <div className="max-w-2xl mx-auto p-6">
+      <div className="max-w-2xl mx-auto p-6 flex-1">
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-2xl font-bold mb-4" style={{ color: 'var(--txt)' }}>
