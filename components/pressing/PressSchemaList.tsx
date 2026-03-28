@@ -11,7 +11,11 @@ const ZONE_COLORS = {
   low: '#3b82f6',
 };
 
-export default function PressSchemaList() {
+interface Props {
+  refreshTrigger?: number;
+}
+
+export default function PressSchemaList({ refreshTrigger }: Props) {
   const { listSchemas, deleteSchema, loading } = usePressSchemas();
   const { loadSchema } = usePressStore();
   const [schemas, setSchemas] = useState<PressSchema[]>([]);
@@ -28,7 +32,7 @@ export default function PressSchemaList() {
 
   useEffect(() => {
     loadSchemasData();
-  }, [loadSchemasData]);
+  }, [loadSchemasData, refreshTrigger]);
 
   async function handleDelete(id: string) {
     try {

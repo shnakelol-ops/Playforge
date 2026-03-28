@@ -39,6 +39,7 @@ export default function PressingPage() {
   const [showShare, setShowShare] = useState(false);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
   const [saveError, setSaveError] = useState('');
+  const [schemaRefreshKey, setSchemaRefreshKey] = useState(0);
 
   /** Returns true when a section has been meaningfully configured */
   function isSectionComplete(num: 1 | 2 | 3 | 4 | 5): boolean {
@@ -68,6 +69,7 @@ export default function PressingPage() {
         postPress: state.postPress,
       });
       setSaveStatus('saved');
+      setSchemaRefreshKey(k => k + 1); // Tell PressSchemaList to reload
       // Reset status after 2 seconds
       setTimeout(() => setSaveStatus('idle'), 2000);
     } catch (err) {
@@ -226,7 +228,7 @@ export default function PressingPage() {
 
         {/* Saved schemas */}
         <div className="mb-6">
-          <PressSchemaList />
+          <PressSchemaList refreshTrigger={schemaRefreshKey} />
         </div>
       </div>
 
