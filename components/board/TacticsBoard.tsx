@@ -5,7 +5,7 @@ import { useBoardStore } from '@/lib/store';
 import type { Player } from '@/lib/store';
 import { drawPitch } from './PitchRenderer';
 import { drawPlayers } from './PlayerLayer';
-import { drawRuns } from './RunLayer';
+import { drawRuns, drawControlPointHandles } from './RunLayer';
 
 const PLAYER_RADIUS_DESKTOP = 14;
 const PLAYER_RADIUS_MOBILE = 12;
@@ -37,12 +37,13 @@ export default function TacticsBoard() {
   const containerRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number>(0);
   const animStartRef = useRef<number>(0);
-  const animStartPositionsRef = useRef<{ id: number; team: 'home' | 'away'; startRx: number; startRy: number; endRx: number; endRy: number }[]>([]);
+  const animStartPositionsRef = useRef<{ id: number; team: 'home' | 'away'; startRx: number; startRy: number; endRx: number; endRy: number; cpX?: number; cpY?: number }[]>([]);
 
   const {
     sport, mode, runStyle, phases, currentPhase,
     animating, animationSpeed,
-    updatePlayerPosition, addRun, setBallPosition,
+    showHome, showAway,
+    updatePlayerPosition, addRun, updateRunControlPoint, setBallPosition,
     setAnimating,
   } = useBoardStore();
 
@@ -58,8 +59,18 @@ export default function TacticsBoard() {
     ctx.clearRect(0, 0, w, h);
     drawPitch(ctx, w, h, sport);
 
-    drawRuns(ctx, w, h, phase.runs);
-    drawPlayers(ctx, w, h, phase.playerPositions.home, phase.playerPositions.away, getPlayerRadius(canvas));
+    // Filter runs and players by team visibility
+    const visibleRuns = phase.runs.filter(r =>
+      (r.team === 'home' && showHome) || (r.team === 'away' && showAway)
+    );
+    const visibleHome = showHome ? phase.playerPositions.home : [];
+    const visibleAway = showAway ? phase.playerPositions.away : [];
+
+    drawRuns(ctx, w, h, visibleRuns);
+    if (mode === 'draw') {
+      drawControlPointHandles(ctx, w, h, visibleRuns);
+    }
+    drawPlayers(ctx, w, h, visibleHome, visibleAway, getPlayerRadius(canvas));
 
     // Ball
     const ball = toPixel(phase.ballPosition.x, phase.ballPosition.y, w, h);
@@ -70,7 +81,7 @@ export default function TacticsBoard() {
     ctx.lineWidth = 1.5;
     ctx.fill();
     ctx.stroke();
-  }, [phase, sport]);
+  }, [phase, sport, mode, showHome, showAway]);
 
   // Resize observer
   useEffect(() => {
@@ -107,17 +118,20 @@ export default function TacticsBoard() {
     if (!canvas) return;
     const { width: w, height: h } = canvas;
 
-    // Collect start → end positions (end = where players currently are, we animate FROM default to current)
-    // Actually: animate from current positions using runs as target offsets.
-    // Simple approach: animate each player along their run arrow.
-    const targets = phase.runs.map(run => ({
-      id: run.playerId,
-      team: run.team,
-      startRx: run.startX,
-      startRy: run.startY,
-      endRx: run.endX,
-      endRy: run.endY,
-    }));
+    // Collect start → end positions, filtering by team visibility
+    // Animate each player along their run arrow using bezier curves
+    const targets = phase.runs
+      .filter(r => (r.team === 'home' && showHome) || (r.team === 'away' && showAway))
+      .map(run => ({
+        id: run.playerId,
+        team: run.team,
+        startRx: run.startX,
+        startRy: run.startY,
+        endRx: run.endX,
+        endRy: run.endY,
+        cpX: run.cpX,
+        cpY: run.cpY,
+      }));
 
     animStartPositionsRef.current = targets;
     animStartRef.current = performance.now();
@@ -136,27 +150,41 @@ export default function TacticsBoard() {
       ctx.clearRect(0, 0, w, h);
       drawPitch(ctx, w, h, sport);
 
-      // Interpolate players with runs
-      const animatedHome = phase.playerPositions.home.map(p => {
+      // Interpolate players with runs using quadratic bezier curves
+      const bezierPoint = (t: number, p0: number, p1: number, p2: number): number => {
+        const t1 = 1 - t;
+        return t1 * t1 * p0 + 2 * t1 * t * p1 + t * t * p2;
+      };
+
+      const animatedHome = (showHome ? phase.playerPositions.home : []).map(p => {
         const target = animStartPositionsRef.current.find(a => a.id === p.id && a.team === 'home');
         if (!target) return p;
+        const cpRx = target.cpX !== undefined ? target.cpX : (target.startRx + target.endRx) / 2;
+        const cpRy = target.cpY !== undefined ? target.cpY : (target.startRy + target.endRy) / 2;
         return {
           ...p,
-          rx: target.startRx + (target.endRx - target.startRx) * eased,
-          ry: target.startRy + (target.endRy - target.startRy) * eased,
+          rx: bezierPoint(eased, target.startRx, cpRx, target.endRx),
+          ry: bezierPoint(eased, target.startRy, cpRy, target.endRy),
         };
       });
-      const animatedAway = phase.playerPositions.away.map(p => {
+      const animatedAway = (showAway ? phase.playerPositions.away : []).map(p => {
         const target = animStartPositionsRef.current.find(a => a.id === p.id && a.team === 'away');
         if (!target) return p;
+        const cpRx = target.cpX !== undefined ? target.cpX : (target.startRx + target.endRx) / 2;
+        const cpRy = target.cpY !== undefined ? target.cpY : (target.startRy + target.endRy) / 2;
         return {
           ...p,
-          rx: target.startRx + (target.endRx - target.startRx) * eased,
-          ry: target.startRy + (target.endRy - target.startRy) * eased,
+          rx: bezierPoint(eased, target.startRx, cpRx, target.endRx),
+          ry: bezierPoint(eased, target.startRy, cpRy, target.endRy),
         };
       });
 
-      drawRuns(ctx, w, h, phase.runs);
+      // Filter runs by team visibility
+      const visibleRuns = phase.runs.filter(r =>
+        (r.team === 'home' && showHome) || (r.team === 'away' && showAway)
+      );
+
+      drawRuns(ctx, w, h, visibleRuns);
       drawPlayers(ctx, w, h, animatedHome, animatedAway, getPlayerRadius(canvas));
 
       // Ball
@@ -178,10 +206,10 @@ export default function TacticsBoard() {
 
     rafRef.current = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(rafRef.current);
-  }, [animating, animationSpeed, phase, sport, setAnimating]);
+  }, [animating, animationSpeed, phase, sport, setAnimating, showHome, showAway]);
 
   // Interaction state
-  const dragRef = useRef<{ type: 'player' | 'ball'; id?: number; team?: 'home' | 'away' } | null>(null);
+  const dragRef = useRef<{ type: 'player' | 'ball' | 'controlPoint'; id?: number; team?: 'home' | 'away' } | null>(null);
   const drawStartRef = useRef<{ id: number; team: 'home' | 'away'; sx: number; sy: number } | null>(null);
 
   function getCanvasPoint(e: React.MouseEvent | React.TouchEvent) {
@@ -203,6 +231,24 @@ export default function TacticsBoard() {
     if (mode === 'ball') {
       dragRef.current = { type: 'ball' };
       return;
+    }
+
+    // Control point hit-testing in draw mode (before player testing)
+    if (mode === 'draw') {
+      const CP_HIT_RADIUS = 8;
+      for (const run of phase.runs) {
+        const sx = run.startX * w;
+        const sy = run.startY * h;
+        const ex = run.endX * w;
+        const ey = run.endY * h;
+        const cpXpx = run.cpX !== undefined ? run.cpX * w : (sx + ex) / 2;
+        const cpYpx = run.cpY !== undefined ? run.cpY * h : (sy + ey) / 2;
+
+        if (Math.hypot(x - cpXpx, y - cpYpx) <= CP_HIT_RADIUS) {
+          dragRef.current = { type: 'controlPoint', id: run.playerId, team: run.team };
+          return;  // early return prevents starting a new run draw
+        }
+      }
     }
 
     const allPlayers: (Player & { team: 'home' | 'away' })[] = [
@@ -237,6 +283,13 @@ export default function TacticsBoard() {
     if (mode === 'ball' && dragRef.current?.type === 'ball') {
       const rel = toRelative(x, y, w, h);
       setBallPosition(currentPhase, { x: Math.max(0, Math.min(1, rel.rx)), y: Math.max(0, Math.min(1, rel.ry)) });
+    }
+
+    if (mode === 'draw' && dragRef.current?.type === 'controlPoint') {
+      const rel = toRelative(x, y, w, h);
+      const cpX = Math.max(0, Math.min(1, rel.rx));
+      const cpY = Math.max(0, Math.min(1, rel.ry));
+      updateRunControlPoint(currentPhase, dragRef.current.id!, cpX, cpY);
     }
 
     if (mode === 'draw' && drawStartRef.current) {

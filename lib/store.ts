@@ -15,6 +15,8 @@ export interface Run {
   endY: number;
   style: RunStyle;
   team: 'home' | 'away';
+  cpX?: number;  // control point X, 0-1 relative (optional for backward compat)
+  cpY?: number;  // control point Y, 0-1 relative (optional for backward compat)
 }
 
 export interface BallPosition {
@@ -40,6 +42,8 @@ interface BoardStore {
   currentPhase: number;
   animating: boolean;
   animationSpeed: number;
+  showHome: boolean;
+  showAway: boolean;
 
   setSport: (sport: Sport) => void;
   setMode: (mode: InteractionMode) => void;
@@ -47,10 +51,13 @@ interface BoardStore {
   setCurrentPhase: (index: number) => void;
   setAnimating: (val: boolean) => void;
   setAnimationSpeed: (speed: number) => void;
+  setShowHome: (val: boolean) => void;
+  setShowAway: (val: boolean) => void;
   addPhase: () => void;
   updatePlayerPosition: (phaseIndex: number, team: 'home' | 'away', playerId: number, rx: number, ry: number) => void;
   addRun: (phaseIndex: number, run: Run) => void;
   removeRun: (phaseIndex: number, playerId: number) => void;
+  updateRunControlPoint: (phaseIndex: number, playerId: number, cpX: number, cpY: number) => void;
   setBallPosition: (phaseIndex: number, pos: BallPosition) => void;
   loadPlay: (phases: Phase[], sport: Sport) => void;
   resetBoard: (sport: Sport) => void;
@@ -77,6 +84,8 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
   currentPhase: 0,
   animating: false,
   animationSpeed: 1,
+  showHome: true,
+  showAway: true,
 
   setSport: (sport) => set({ sport, phases: [createInitialPhase(sport)], currentPhase: 0 }),
   setMode: (mode) => set({ mode }),
@@ -84,6 +93,8 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
   setCurrentPhase: (index) => set({ currentPhase: index }),
   setAnimating: (animating) => set({ animating }),
   setAnimationSpeed: (animationSpeed) => set({ animationSpeed }),
+  setShowHome: (showHome) => set({ showHome }),
+  setShowAway: (showAway) => set({ showAway }),
 
   addPhase: () => {
     const { phases } = get();
@@ -126,6 +137,16 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
     const phases = [...get().phases];
     const phase = { ...phases[phaseIndex] };
     phase.runs = phase.runs.filter(r => r.playerId !== playerId);
+    phases[phaseIndex] = phase;
+    set({ phases });
+  },
+
+  updateRunControlPoint: (phaseIndex, playerId, cpX, cpY) => {
+    const phases = [...get().phases];
+    const phase = { ...phases[phaseIndex] };
+    phase.runs = phase.runs.map(r =>
+      r.playerId === playerId ? { ...r, cpX, cpY } : r
+    );
     phases[phaseIndex] = phase;
     set({ phases });
   },

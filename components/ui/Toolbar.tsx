@@ -22,7 +22,7 @@ const runStyles: { value: RunStyle; label: string }[] = [
 ];
 
 export default function Toolbar({ onSave, onShare }: { onSave: () => void; onShare: () => void }) {
-  const { sport, mode, runStyle, setSport, setMode, setRunStyle, animating, animationSpeed, setAnimating, setAnimationSpeed } = useBoardStore();
+  const { sport, mode, runStyle, setSport, setMode, setRunStyle, animating, animationSpeed, setAnimating, setAnimationSpeed, showHome, setShowHome, showAway, setShowAway } = useBoardStore();
 
   return (
     <div
@@ -51,6 +51,36 @@ export default function Toolbar({ onSave, onShare }: { onSave: () => void; onSha
             {s.label}
           </button>
         ))}
+      </div>
+
+      <div className="w-px h-6 shrink-0" style={{ background: 'var(--bdr)' }} />
+
+      {/* Team visibility */}
+      <div className="flex gap-1 shrink-0">
+        <button
+          onClick={() => setShowHome(!showHome)}
+          className="px-3 py-1 rounded-md text-xs font-medium transition-all flex items-center gap-1"
+          style={{
+            background: '#00e07a',
+            color: '#0b0f18',
+            opacity: showHome ? 1 : 0.5,
+          }}
+        >
+          <span style={{ textDecoration: showHome ? 'none' : 'line-through' }}>👁</span>
+          <span>Home</span>
+        </button>
+        <button
+          onClick={() => setShowAway(!showAway)}
+          className="px-3 py-1 rounded-md text-xs font-medium transition-all flex items-center gap-1"
+          style={{
+            background: '#f5a623',
+            color: '#0b0f18',
+            opacity: showAway ? 1 : 0.5,
+          }}
+        >
+          <span style={{ textDecoration: showAway ? 'none' : 'line-through' }}>👁</span>
+          <span>Away</span>
+        </button>
       </div>
 
       <div className="w-px h-6 shrink-0" style={{ background: 'var(--bdr)' }} />
