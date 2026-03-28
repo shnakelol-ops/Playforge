@@ -6,9 +6,8 @@ import { toPixel, toRelative, easeInOut, hitTest } from '@/lib/canvas-utils';
 import { drawPitch } from '@/components/board/PitchRenderer';
 import type { Sport } from '@/lib/pitch-config';
 
-const CANVAS_HEIGHT = 250;
 const PLAYER_RADIUS = 14;
-const ANIMATION_DURATION = 2500; // ms
+const ANIMATION_DURATION = 1500; // ms - 1.5 seconds as specified
 
 interface AnimationState {
   isAnimating: boolean;
@@ -20,20 +19,22 @@ export default function AnimPitchCanvas() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { sport, pressPhases, currentPhase, selectPhase, setPlayerTarget } = usePressStore();
-  const [canvasSize, setCanvasSize] = useState({ w: 0, h: CANVAS_HEIGHT });
+  const [canvasSize, setCanvasSize] = useState({ w: 0, h: 0 });
   const [animState, setAnimState] = useState<AnimationState>({ isAnimating: false, startTime: 0 });
   const [draggingPlayerId, setDraggingPlayerId] = useState<number | null>(null);
 
   const phase = pressPhases.find(p => p.phaseNumber === currentPhase)!;
 
-  // ResizeObserver for canvas sizing
+  // ResizeObserver for canvas sizing with aspect ratio 145/90
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
     const observer = new ResizeObserver(() => {
       const rect = container.getBoundingClientRect();
-      setCanvasSize({ w: Math.max(300, rect.width), h: CANVAS_HEIGHT });
+      const w = Math.max(300, rect.width);
+      const h = rect.height; // Height is calculated from aspect ratio CSS
+      setCanvasSize({ w, h: h > 0 ? h : w * (90 / 145) });
     });
 
     observer.observe(container);
@@ -194,7 +195,7 @@ export default function AnimPitchCanvas() {
       </div>
 
       {/* Canvas */}
-      <div ref={containerRef} className="w-full">
+      <div ref={containerRef} className="w-full" style={{ aspectRatio: '145 / 90' }}>
         <canvas
           ref={canvasRef}
           onMouseDown={handleCanvasMouseDown}
@@ -203,7 +204,6 @@ export default function AnimPitchCanvas() {
             borderColor: 'var(--bdr)',
             borderRadius: '0.5rem',
             cursor: draggingPlayerId !== null ? 'grabbing' : 'pointer',
-            height: `${CANVAS_HEIGHT}px`,
             display: 'block',
           }}
         />

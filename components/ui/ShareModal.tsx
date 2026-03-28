@@ -8,14 +8,15 @@ interface Props {
   onClose: () => void;
 }
 
-function generateWhatsAppMessage(playName: string, sport: string, phases: Phase[]): string {
+function generateWhatsAppMessage(playName: string, sport: string, phases: Phase[], playerNames: Record<'home' | 'away', Record<number, string>>): string {
   const sportLabel: Record<string, string> = {
     gaa: 'Gaelic Football',
     hurling: 'Hurling',
     soccer: 'Soccer',
   };
+
   let msg = `*Pitchside* — ${sportLabel[sport] ?? sport}\n\n`;
-  msg += `*Play: ${playName}*\n`;
+  msg += `*Play: ${playName || 'Untitled'}*\n`;
   msg += `Phases: ${phases.length}\n\n`;
 
   phases.forEach((phase, i) => {
@@ -27,24 +28,31 @@ function generateWhatsAppMessage(playName: string, sport: string, phases: Phase[
         const allPlayers = [...phase.playerPositions.home, ...phase.playerPositions.away];
         const player = allPlayers.find(p => p.id === run.playerId);
         if (player) {
-          msg += `• #${player.num} ${player.pos} (${run.team}) — ${run.style}\n`;
+          const customName = playerNames[run.team]?.[run.playerId];
+          const displayName = customName || player.num;
+          msg += `• #${player.num} ${displayName} — ${run.style}\n`;
         }
       });
     }
     msg += '\n';
   });
 
-  msg += `Created with Pitchside — Independent coaching tools for Gaelic and Soccer coaches — pitchside.app`;
+  msg += `Shared via Pitchside — pitchside.fyi`;
   return msg;
 }
 
 export default function ShareModal({ playName, onClose }: Props) {
-  const { phases, sport } = useBoardStore();
+  const { phases, sport, playerNames } = useBoardStore();
 
   function shareWhatsApp() {
-    const message = generateWhatsAppMessage(playName || 'Untitled play', sport, phases);
+    console.log('Share button clicked - playName:', playName, 'sport:', sport, 'phases:', phases.length, 'playerNames:', playerNames);
+    const message = generateWhatsAppMessage(playName || 'Untitled play', sport, phases, playerNames);
+    console.log('Generated message:', message);
     const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
+    console.log('WhatsApp URL constructed:', url.substring(0, 50) + '...');
+    // Call window.open directly in the event handler (not async/setTimeout) to avoid popup blocking
     window.open(url, '_blank');
+    onClose();
   }
 
   function copyLink() {

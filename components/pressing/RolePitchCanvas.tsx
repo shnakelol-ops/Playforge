@@ -8,7 +8,6 @@ import { getDefaultPositions } from '@/lib/pitch-config';
 import type { PressRole } from '@/lib/press-types';
 import type { Sport } from '@/lib/pitch-config';
 
-const CANVAS_HEIGHT = 220;
 const PLAYER_RADIUS = 14;
 
 const ROLE_COLORS: Record<PressRole, { fill: string; badge: string }> = {
@@ -32,18 +31,20 @@ export default function RolePitchCanvas() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { sport, playerRoles, setPlayerRole } = usePressStore();
-  const [canvasSize, setCanvasSize] = useState({ w: 0, h: CANVAS_HEIGHT });
+  const [canvasSize, setCanvasSize] = useState({ w: 0, h: 0 });
 
   const players = getDefaultPositions(sport).home;
 
-  // ResizeObserver for canvas sizing
+  // ResizeObserver for canvas sizing with aspect ratio 145/90
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
     const observer = new ResizeObserver(() => {
       const rect = container.getBoundingClientRect();
-      setCanvasSize({ w: Math.max(300, rect.width), h: CANVAS_HEIGHT });
+      const w = Math.max(300, rect.width);
+      const h = rect.height; // Height is calculated from aspect ratio CSS
+      setCanvasSize({ w, h: h > 0 ? h : w * (90 / 145) });
     });
 
     observer.observe(container);
@@ -123,7 +124,7 @@ export default function RolePitchCanvas() {
   };
 
   return (
-    <div ref={containerRef} className="w-full">
+    <div ref={containerRef} className="w-full" style={{ aspectRatio: '145 / 90' }}>
       <canvas
         ref={canvasRef}
         onClick={handleCanvasClick}
@@ -132,7 +133,6 @@ export default function RolePitchCanvas() {
           borderColor: 'var(--bdr)',
           borderRadius: '0.5rem',
           cursor: 'pointer',
-          height: `${CANVAS_HEIGHT}px`,
           display: 'block',
         }}
       />
