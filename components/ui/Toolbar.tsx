@@ -26,7 +26,7 @@ const runStyles: { value: RunStyle; label: string }[] = [
   { value: 'pass', label: 'Pass' },
 ];
 
-export default function Toolbar({ onSave, onShare, onBench }: { onSave: () => void; onShare: () => void; onBench?: () => void }) {
+export default function Toolbar({ onSave, onShare, onBench, onSidebar }: { onSave: () => void; onShare: () => void; onBench?: () => void; onSidebar?: () => void }) {
   const [showDisplayMenu, setShowDisplayMenu] = useState(false);
   const {
     sport, mode, runStyle,
@@ -321,6 +321,17 @@ export default function Toolbar({ onSave, onShare, onBench }: { onSave: () => vo
           style={{ background: 'var(--bg3)', color: 'var(--txt2)' }}
         >
           Bench
+        </button>
+      )}
+
+      {/* Sidebar button (mobile only) */}
+      {onSidebar && (
+        <button
+          onClick={onSidebar}
+          className="md:hidden px-3 py-1 rounded-md text-xs font-medium transition-all shrink-0"
+          style={{ background: 'var(--bg3)', color: 'var(--txt2)' }}
+        >
+          Squad
         </button>
       )}
 

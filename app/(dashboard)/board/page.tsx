@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import AppNav from '@/components/ui/AppNav';
 import Toolbar from '@/components/ui/Toolbar';
 import PhaseBar from '@/components/ui/PhaseBar';
+import Sidebar from '@/components/board/Sidebar';
 import SaveModal from '@/components/ui/SaveModal';
 import ShareModal from '@/components/ui/ShareModal';
 import TrainingPanel from '@/components/ui/TrainingPanel';
@@ -19,6 +20,7 @@ export default function BoardPage() {
   const [showShare, setShowShare] = useState(false);
   const [showUpgrade, setShowUpgrade] = useState(false);
   const [showBench, setShowBench] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(false);
   const [currentPlayName, setCurrentPlayName] = useState('');
   const { phases, sport, mode } = useBoardStore();
   const { savePlay } = usePlaybook();
@@ -41,12 +43,24 @@ export default function BoardPage() {
         onSave={() => setShowSave(true)}
         onShare={() => setShowShare(true)}
         onBench={() => setShowBench(v => !v)}
+        onSidebar={() => setShowSidebar(v => !v)}
       />
 
-      <div className="flex-1 overflow-hidden relative">
-        <TacticsBoard />
-        {mode === 'training' && <TrainingPanel />}
-        {showBench && <SubstitutionsPanel />}
+      <div className="flex flex-1 overflow-hidden relative">
+        {/* Desktop sidebar */}
+        <div className="hidden md:flex md:w-80 flex-col border-l border-solid" style={{ borderColor: 'var(--bdr)' }}>
+          <Sidebar isOpen={true} onClose={() => {}} />
+        </div>
+
+        {/* Main canvas area */}
+        <div className="flex-1 overflow-hidden relative md:border-l" style={{ borderColor: 'var(--bdr)' }}>
+          <TacticsBoard />
+          {mode === 'training' && <TrainingPanel />}
+          {showBench && <SubstitutionsPanel />}
+        </div>
+
+        {/* Mobile sidebar */}
+        <Sidebar isOpen={showSidebar} onClose={() => setShowSidebar(false)} />
       </div>
 
       <PhaseBar />
