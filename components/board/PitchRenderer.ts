@@ -1,20 +1,21 @@
 import type { Sport } from '@/lib/pitch-config';
+import { CANVAS_COLORS } from '@/lib/team-colors';
 
 export function drawPitch(ctx: CanvasRenderingContext2D, w: number, h: number, sport: Sport) {
   // Background
-  ctx.fillStyle = '#1a6b30';
+  ctx.fillStyle = CANVAS_COLORS.pitch.grass;
   ctx.fillRect(0, 0, w, h);
 
   // Grass stripes
   const stripeCount = 10;
   for (let i = 0; i < stripeCount; i++) {
     if (i % 2 === 0) {
-      ctx.fillStyle = 'rgba(0,0,0,0.07)';
+      ctx.fillStyle = CANVAS_COLORS.pitch.grassStripe;
       ctx.fillRect(0, (i / stripeCount) * h, w, h / stripeCount);
     }
   }
 
-  ctx.strokeStyle = 'rgba(255,255,255,0.82)';
+  ctx.strokeStyle = CANVAS_COLORS.pitch.line;
   ctx.lineWidth = 1.5;
 
   if (sport === 'soccer') {
@@ -48,7 +49,7 @@ function drawSoccerPitch(ctx: CanvasRenderingContext2D, w: number, h: number) {
   // Centre dot
   ctx.beginPath();
   ctx.arc(w / 2, h / 2, 3, 0, Math.PI * 2);
-  ctx.fillStyle = 'rgba(255,255,255,0.82)';
+  ctx.fillStyle = CANVAS_COLORS.pitch.penaltySpot;
   ctx.fill();
 
   // Penalty areas
@@ -66,6 +67,27 @@ function drawSoccerPitch(ctx: CanvasRenderingContext2D, w: number, h: number) {
   const gaH = paH * 0.40;
   ctx.strokeRect(paCX - gaW / 2, top, gaW, gaH);
   ctx.strokeRect(paCX - gaW / 2, bottom - gaH, gaW, gaH);
+
+  // D-arcs on penalty areas
+  const dArcR = w * 0.06;
+  ctx.beginPath();
+  ctx.arc(paCX, top + paH, dArcR, 0, Math.PI);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(paCX, bottom - paH, dArcR, Math.PI, 0);
+  ctx.stroke();
+
+  // Penalty spots
+  const penaltySpotX = paCX;
+  const penaltySpotY1 = top + paH * 0.4;
+  const penaltySpotY2 = bottom - paH * 0.4;
+  ctx.beginPath();
+  ctx.arc(penaltySpotX, penaltySpotY1, 2, 0, Math.PI * 2);
+  ctx.fillStyle = CANVAS_COLORS.pitch.penaltySpot;
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(penaltySpotX, penaltySpotY2, 2, 0, Math.PI * 2);
+  ctx.fill();
 
   // Goals
   const goalW = gaW * 0.7;
@@ -151,7 +173,7 @@ function drawGAAPitch(ctx: CanvasRenderingContext2D, w: number, h: number, isHur
   const penaltyY = pitchH * 0.07;
   ctx.beginPath();
   ctx.arc(w / 2, top + penaltyY, 3, 0, Math.PI * 2);
-  ctx.fillStyle = 'rgba(255,255,255,0.82)';
+  ctx.fillStyle = CANVAS_COLORS.pitch.penaltySpot;
   ctx.fill();
   ctx.beginPath();
   ctx.arc(w / 2, bottom - penaltyY, 3, 0, Math.PI * 2);

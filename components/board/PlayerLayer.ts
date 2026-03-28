@@ -1,4 +1,5 @@
 import type { Player, PlayerDisplayMode } from '@/lib/store';
+import { TEAM_COLORS, CANVAS_COLORS } from '@/lib/team-colors';
 
 export function drawPlayers(
   ctx: CanvasRenderingContext2D,
@@ -12,10 +13,10 @@ export function drawPlayers(
   showPositions: boolean = false
 ) {
   for (const p of home) {
-    drawPlayer(ctx, w, h, p, radius, '#00e07a', '#00b862', displayMode, showNumbers, showPositions);
+    drawPlayer(ctx, w, h, p, radius, TEAM_COLORS.home.fill, TEAM_COLORS.home.stroke, displayMode, showNumbers, showPositions);
   }
   for (const p of away) {
-    drawPlayer(ctx, w, h, p, radius, '#f5a623', '#c47d0a', displayMode, showNumbers, showPositions);
+    drawPlayer(ctx, w, h, p, radius, TEAM_COLORS.away.fill, TEAM_COLORS.away.stroke, displayMode, showNumbers, showPositions);
   }
 }
 
@@ -60,7 +61,7 @@ function drawPlayer(
   }
 
   // Draw center content based on display mode
-  ctx.fillStyle = '#0b0f18';
+  ctx.fillStyle = CANVAS_COLORS.ui.darkText;
   ctx.font = `bold ${Math.round(radius * 0.85)}px "DM Sans", sans-serif`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';

@@ -127,6 +127,7 @@ interface BoardStore {
   setBenchPlayers: (players: Player[]) => void;
   setPendingSubId: (id: string | null) => void;
   addPhase: () => void;
+  deletePhase: (phaseIndex: number) => void;
   updatePlayerPosition: (phaseIndex: number, team: 'home' | 'away', playerId: number, rx: number, ry: number) => void;
   addRun: (phaseIndex: number, run: Run) => void;
   removeRun: (phaseIndex: number, playerId: number) => void;
@@ -235,6 +236,15 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
       ballPosition: { ...lastPhase.ballPosition },
     };
     set({ phases: [...phases, newPhase], currentPhase: phases.length });
+  },
+
+  deletePhase: (phaseIndex: number) => {
+    const { phases, currentPhase } = get();
+    // Cannot delete phase 1 (index 0) or if less than 2 phases
+    if (phaseIndex === 0 || phases.length <= 1) return;
+    const newPhases = phases.filter((_, i) => i !== phaseIndex);
+    const newCurrentPhase = currentPhase >= phaseIndex ? Math.max(0, currentPhase - 1) : currentPhase;
+    set({ phases: newPhases, currentPhase: newCurrentPhase });
   },
 
   updatePlayerPosition: (phaseIndex, team, playerId, rx, ry) => {

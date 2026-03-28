@@ -601,7 +601,7 @@ export default function TacticsBoard() {
   }, [selectedEntityId, phase, currentPhase, removeTrainingItem, removeTextLabel, setSelectedEntityId]);
 
   return (
-    <div ref={containerRef} className="relative w-full h-full">
+    <div ref={containerRef} className="relative w-full h-full" style={{ aspectRatio: '145 / 90' }}>
       <canvas
         ref={canvasRef}
         className="w-full h-full"
