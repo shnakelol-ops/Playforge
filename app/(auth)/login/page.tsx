@@ -35,41 +35,51 @@ export default function LoginPage() {
         <p className="text-sm mb-6" style={{ color: 'var(--txt2)' }}>Sign in to Pitchside</p>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            required
-            className="px-4 py-3 rounded-lg text-sm outline-none"
-            style={{ background: 'var(--bg3)', color: 'var(--txt)', border: '1px solid var(--bdr)' }}
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            required
-            className="px-4 py-3 rounded-lg text-sm outline-none"
-            style={{ background: 'var(--bg3)', color: 'var(--txt)', border: '1px solid var(--bdr)' }}
-          />
-          {error && <p className="text-red-400 text-sm">{error}</p>}
+          <div>
+            <label className="text-xs font-medium mb-2 block" style={{ color: 'var(--txt2)' }}>Email</label>
+            <input
+              type="email"
+              placeholder="you@example.com"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              required
+              className="input w-full"
+            />
+          </div>
+          <div>
+            <label className="text-xs font-medium mb-2 block" style={{ color: 'var(--txt2)' }}>Password</label>
+            <input
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              required
+              className="input w-full"
+            />
+          </div>
+          {error && <p className="text-red-400 text-sm p-3 rounded-lg" style={{ background: 'rgba(239, 68, 68, 0.1)' }}>{error}</p>}
           <button
             type="submit"
             disabled={loading}
-            className="py-3 rounded-lg font-semibold text-sm transition-opacity disabled:opacity-60"
-            style={{ background: 'var(--acc)', color: '#0b0f18' }}
+            className="btn btn-primary w-full mt-2"
           >
             {loading ? 'Signing in...' : 'Sign in'}
           </button>
         </form>
 
-        <p className="mt-6 text-center text-sm" style={{ color: 'var(--txt2)' }}>
-          No account?{' '}
-          <Link href="/register" style={{ color: 'var(--acc)' }}>
-            Create one free
-          </Link>
-        </p>
+        <div className="mt-6 flex flex-col gap-3 text-center text-sm">
+          <p style={{ color: 'var(--txt2)' }}>
+            No account?{' '}
+            <Link href="/register" style={{ color: 'var(--acc)' }} className="font-medium hover:underline">
+              Create one free
+            </Link>
+          </p>
+          <p style={{ color: 'var(--txt2)' }}>
+            <Link href="#" style={{ color: 'var(--txt2)' }} className="hover:text-accent transition-colors">
+              Forgot password?
+            </Link>
+          </p>
+        </div>
 
         <p className="text-xs text-center mt-6 pt-6 border-t" style={{ color: 'var(--txt2)', borderColor: 'var(--bdr)' }}>
           <Link href="/privacy" style={{ color: 'var(--acc)', textDecoration: 'underline' }}>

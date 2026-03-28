@@ -56,34 +56,41 @@ export default function RegisterPage() {
         <p className="text-sm mb-6" style={{ color: 'var(--txt2)' }}>Start free — no credit card needed</p>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <input
-            type="text"
-            placeholder="Full name"
-            value={fullName}
-            onChange={e => setFullName(e.target.value)}
-            required
-            className="px-4 py-3 rounded-lg text-sm outline-none"
-            style={{ background: 'var(--bg3)', color: 'var(--txt)', border: '1px solid var(--bdr)' }}
-          />
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            required
-            className="px-4 py-3 rounded-lg text-sm outline-none"
-            style={{ background: 'var(--bg3)', color: 'var(--txt)', border: '1px solid var(--bdr)' }}
-          />
-          <input
-            type="password"
-            placeholder="Password (min 6 characters)"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            minLength={6}
-            required
-            className="px-4 py-3 rounded-lg text-sm outline-none"
-            style={{ background: 'var(--bg3)', color: 'var(--txt)', border: '1px solid var(--bdr)' }}
-          />
+          <div>
+            <label className="text-xs font-medium mb-2 block" style={{ color: 'var(--txt2)' }}>Full name</label>
+            <input
+              type="text"
+              placeholder="John Smith"
+              value={fullName}
+              onChange={e => setFullName(e.target.value)}
+              required
+              className="input w-full"
+            />
+          </div>
+          <div>
+            <label className="text-xs font-medium mb-2 block" style={{ color: 'var(--txt2)' }}>Email</label>
+            <input
+              type="email"
+              placeholder="you@example.com"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              required
+              className="input w-full"
+            />
+          </div>
+          <div>
+            <label className="text-xs font-medium mb-2 block" style={{ color: 'var(--txt2)' }}>Password</label>
+            <input
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              minLength={6}
+              required
+              className="input w-full"
+            />
+            <p className="text-xs mt-1" style={{ color: 'var(--txt2)' }}>Minimum 6 characters</p>
+          </div>
           <div className="flex flex-col gap-2">
             <label className="text-sm" style={{ color: 'var(--txt2)' }}>Primary sport</label>
             <div className="flex gap-2">
@@ -105,9 +112,9 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          {error && <p className="text-red-400 text-sm">{error}</p>}
+          {error && <p className="text-red-400 text-sm p-3 rounded-lg" style={{ background: 'rgba(239, 68, 68, 0.1)' }}>{error}</p>}
 
-          <div className="flex items-start gap-3 my-4">
+          <div className="flex items-start gap-3 my-2">
             <input
               type="checkbox"
               id="age-confirm"
@@ -115,7 +122,7 @@ export default function RegisterPage() {
               onChange={e => setAgeConfirmed(e.target.checked)}
               className="mt-1"
             />
-            <label htmlFor="age-confirm" className="text-sm" style={{ color: 'var(--txt2)' }}>
+            <label htmlFor="age-confirm" className="text-xs" style={{ color: 'var(--txt2)' }}>
               I confirm I am 16 years of age or older
             </label>
           </div>
@@ -123,8 +130,7 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={loading}
-            className="py-3 rounded-lg font-semibold text-sm transition-opacity disabled:opacity-60"
-            style={{ background: 'var(--acc)', color: '#0b0f18' }}
+            className="btn btn-primary w-full mt-4"
           >
             {loading ? 'Creating account...' : 'Create account'}
           </button>
@@ -143,7 +149,7 @@ export default function RegisterPage() {
 
         <p className="mt-6 text-center text-sm" style={{ color: 'var(--txt2)' }}>
           Already have an account?{' '}
-          <Link href="/login" style={{ color: 'var(--acc)' }}>
+          <Link href="/login" style={{ color: 'var(--acc)' }} className="font-medium hover:underline">
             Sign in
           </Link>
         </p>

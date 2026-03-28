@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { X } from 'lucide-react';
 import { useBoardStore } from '@/lib/store';
 import SquadPanel from './SquadPanel';
+import ItemsPanel from './ItemsPanel';
 
 type SidebarTab = 'squad' | 'items' | 'zones' | 'notes';
 
@@ -89,14 +90,10 @@ export default function Sidebar({ isOpen, onClose }: Props) {
           {/* Tab content */}
           <div className="flex-1 overflow-y-auto">
             {activeTab === 'squad' && <SquadPanel />}
-            {activeTab === 'items' && (
-              <div className="text-sm" style={{ color: 'var(--txt2)' }}>
-                <p>Training items coming soon</p>
-              </div>
-            )}
+            {activeTab === 'items' && <ItemsPanel />}
             {activeTab === 'zones' && (
               <div className="text-sm" style={{ color: 'var(--txt2)' }}>
-                <p>Zone tools coming soon</p>
+                <p>📍 Zone drawing is available in the Ink mode. Draw zones using circle or rectangle shapes with the zone-fill toggle.</p>
               </div>
             )}
             {activeTab === 'notes' && (
@@ -134,8 +131,12 @@ export default function Sidebar({ isOpen, onClose }: Props) {
 
             {/* Content */}
             {activeTab === 'squad' && <SquadPanel />}
-            {activeTab === 'items' && <div>Items coming soon</div>}
-            {activeTab === 'zones' && <div>Zones coming soon</div>}
+            {activeTab === 'items' && <ItemsPanel />}
+            {activeTab === 'zones' && (
+              <div className="text-sm" style={{ color: 'var(--txt2)' }}>
+                <p>📍 Zone drawing is available in the Ink mode. Draw zones using circle or rectangle shapes with the zone-fill toggle.</p>
+              </div>
+            )}
             {activeTab === 'notes' && (
               <textarea
                 placeholder="Add coaching notes..."
