@@ -29,6 +29,8 @@ const runStyles: { value: RunStyle; label: string }[] = [
 
 export default function Toolbar({ onSave, onShare, onBench, onSidebar }: { onSave: () => void; onShare: () => void; onBench?: () => void; onSidebar?: () => void }) {
   const [showDisplayMenu, setShowDisplayMenu] = useState(false);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
+
   const {
     sport, mode, runStyle,
     currentPhase,
@@ -42,6 +44,7 @@ export default function Toolbar({ onSave, onShare, onBench, onSidebar }: { onSav
     showHome, setShowHome,
     showAway, setShowAway,
     clearInkStrokes,
+    clearPhaseDrawing,
   } = useBoardStore();
 
   return (
@@ -251,6 +254,47 @@ export default function Toolbar({ onSave, onShare, onBench, onSidebar }: { onSav
           </button>
         </>
       )}
+
+      {/* Reset drawing button */}
+      <div className="w-px h-6 shrink-0" style={{ background: 'var(--bdr)' }} />
+      <div className="relative shrink-0">
+        <button
+          onClick={() => setShowResetConfirm(!showResetConfirm)}
+          className="px-3 py-1 rounded-md text-xs font-medium transition-all"
+          style={{ background: 'var(--bg3)', color: 'var(--txt2)' }}
+        >
+          🔄 Reset
+        </button>
+        {showResetConfirm && (
+          <div
+            className="absolute left-0 mt-1 w-56 p-3 rounded-lg z-50"
+            style={{ background: 'var(--bg2)', border: '1px solid var(--red)' }}
+          >
+            <p className="text-xs mb-3" style={{ color: 'var(--txt2)' }}>
+              Clear all drawings for this phase? (runs, ink, items, labels)
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => {
+                  clearPhaseDrawing(currentPhase);
+                  setShowResetConfirm(false);
+                }}
+                className="flex-1 px-2 py-1 rounded text-xs font-medium"
+                style={{ background: 'var(--red)', color: '#fff' }}
+              >
+                Clear All
+              </button>
+              <button
+                onClick={() => setShowResetConfirm(false)}
+                className="flex-1 px-2 py-1 rounded text-xs font-medium"
+                style={{ background: 'var(--bg3)', color: 'var(--txt2)' }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
 
       <div className="flex-1" />
 

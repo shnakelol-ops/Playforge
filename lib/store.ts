@@ -140,6 +140,7 @@ interface BoardStore {
   updateTrainingItemPath: (phaseIndex: number, id: string, endX: number, endY: number, cpX: number, cpY: number) => void;
   addInkStroke: (phaseIndex: number, stroke: FreehandStroke) => void;
   clearInkStrokes: (phaseIndex: number) => void;
+  clearPhaseDrawing: (phaseIndex: number) => void;
   addTextLabel: (phaseIndex: number, label: TextLabel) => void;
   moveTextLabel: (phaseIndex: number, id: string, rx: number, ry: number) => void;
   updateTextLabelText: (phaseIndex: number, id: string, text: string) => void;
@@ -349,6 +350,18 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
     const phases = [...get().phases];
     const phase = { ...phases[phaseIndex] };
     phase.inkStrokes = [];
+    phases[phaseIndex] = phase;
+    set({ phases });
+  },
+
+  clearPhaseDrawing: (phaseIndex) => {
+    const phases = [...get().phases];
+    const phase = { ...phases[phaseIndex] };
+    // Clear all drawing elements: runs, training items, ink strokes, text labels
+    phase.runs = [];
+    phase.trainingItems = [];
+    phase.inkStrokes = [];
+    phase.textLabels = [];
     phases[phaseIndex] = phase;
     set({ phases });
   },
