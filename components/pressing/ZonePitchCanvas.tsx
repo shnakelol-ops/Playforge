@@ -5,7 +5,6 @@ import { usePressStore } from '@/lib/press-store';
 import { drawPitch } from '@/components/board/PitchRenderer';
 import type { Sport } from '@/lib/pitch-config';
 
-const ZONE_HEIGHT = 200;
 const ZONE_COLORS = {
   high: 'rgba(239, 68, 68, 0.45)',      // red
   mid: 'rgba(245, 158, 11, 0.45)',      // amber
@@ -22,7 +21,7 @@ export default function ZonePitchCanvas() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { sport, zoneConfig, setZone, setTriggerLine } = usePressStore();
-  const [canvasSize, setCanvasSize] = useState({ w: 0, h: ZONE_HEIGHT });
+  const [canvasSize, setCanvasSize] = useState({ w: 0, h: 0 });
   const [draggingHandle, setDraggingHandle] = useState(false);
 
   // ResizeObserver for canvas sizing
@@ -32,7 +31,9 @@ export default function ZonePitchCanvas() {
 
     const observer = new ResizeObserver(() => {
       const rect = container.getBoundingClientRect();
-      setCanvasSize({ w: Math.max(300, rect.width), h: ZONE_HEIGHT });
+      const w = Math.max(300, rect.width);
+      const h = rect.height; // Height is calculated from aspect ratio CSS
+      setCanvasSize({ w, h: h > 0 ? h : w * (90 / 145) });
     });
 
     observer.observe(container);
@@ -145,7 +146,7 @@ export default function ZonePitchCanvas() {
   }, [draggingHandle, canvasSize.h, setTriggerLine]);
 
   return (
-    <div ref={containerRef} className="w-full">
+    <div ref={containerRef} className="w-full" style={{ aspectRatio: '145 / 90' }}>
       <canvas
         ref={canvasRef}
         onClick={handleCanvasClick}
@@ -155,7 +156,6 @@ export default function ZonePitchCanvas() {
           borderColor: 'var(--bdr)',
           borderRadius: '0.5rem',
           cursor: draggingHandle ? 'grab' : 'pointer',
-          height: `${ZONE_HEIGHT}px`,
           display: 'block',
         }}
       />
