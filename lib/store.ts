@@ -104,6 +104,9 @@ interface BoardStore {
   benchPlayers: Player[];
   pendingSubId: string | null;
 
+  // Player names
+  playerNames: Record<'home' | 'away', Record<number, string>>;
+
   setSport: (sport: Sport) => void;
   setMode: (mode: InteractionMode) => void;
   setRunStyle: (style: RunStyle) => void;
@@ -139,6 +142,7 @@ interface BoardStore {
   moveTextLabel: (phaseIndex: number, id: string, rx: number, ry: number) => void;
   updateTextLabelText: (phaseIndex: number, id: string, text: string) => void;
   removeTextLabel: (phaseIndex: number, id: string) => void;
+  setPlayerName: (team: 'home' | 'away', playerId: number, name: string) => void;
   loadPlay: (phases: Phase[], sport: Sport) => void;
   resetBoard: (sport: Sport) => void;
 }
@@ -186,6 +190,8 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
   benchPlayers: [],
   pendingSubId: null,
 
+  playerNames: { home: {}, away: {} },
+
   setSport: (sport) => set({ sport, phases: [createInitialPhase(sport)], currentPhase: 0 }),
   setMode: (mode) => set({ mode }),
   setRunStyle: (runStyle) => set({ runStyle }),
@@ -205,6 +211,16 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
   setSelectedEntityId: (selectedEntityId) => set({ selectedEntityId }),
   setBenchPlayers: (benchPlayers) => set({ benchPlayers }),
   setPendingSubId: (pendingSubId) => set({ pendingSubId }),
+
+  setPlayerName: (team, playerId, name) => {
+    const { playerNames } = get();
+    set({
+      playerNames: {
+        ...playerNames,
+        [team]: { ...playerNames[team], [playerId]: name },
+      },
+    });
+  },
 
   addPhase: () => {
     const { phases } = get();
