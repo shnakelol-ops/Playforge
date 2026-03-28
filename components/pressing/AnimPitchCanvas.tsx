@@ -110,8 +110,16 @@ export default function AnimPitchCanvas() {
     return () => observer.disconnect();
   }, []);
 
-  // Auto-initialize targets from roles once, when roles exist and targets are all at default
+  // Auto-initialize targets from roles once per sport, when roles exist and targets are all at default.
+  // Track last sport inline so the reset and init happen in the same effect — avoids the ordering
+  // hazard of two separate useEffects sharing the `sport` dependency.
+  const lastSportRef = useRef<string | null>(null);
   useEffect(() => {
+    if (lastSportRef.current !== sport) {
+      lastSportRef.current = sport;
+      autoInitDone.current = false;
+    }
+
     if (autoInitDone.current) return;
     if (Object.keys(playerRoles).length === 0) return;
 
@@ -144,11 +152,6 @@ export default function AnimPitchCanvas() {
 
     autoInitDone.current = true;
   }, [playerRoles, zoneConfig.triggerLine, sport, pressPhases, setPlayerTarget]);
-
-  // Reset auto-init flag when sport or roles are cleared
-  useEffect(() => {
-    autoInitDone.current = false;
-  }, [sport]);
 
   // Animation loop — triggers re-draw each frame while animating
   useEffect(() => {
@@ -185,6 +188,8 @@ export default function AnimPitchCanvas() {
     const progress = Math.min(1, elapsed / ANIMATION_DURATION);
     const easeProgress = easeInOut(progress);
 
+    const positions = getDefaultPositions(sport as Sport).home;
+
     // Draw players with easeInOut interpolation during animation
     phase.playerTargets.forEach(target => {
       const role = (playerRoles[target.playerId] ?? null) as PressRole | null;
@@ -198,7 +203,6 @@ export default function AnimPitchCanvas() {
 
       const { x: px, y: py } = toPixel(displayRx, displayRy, canvasSize.w, canvasSize.h);
 
-      // Draw movement line from start to end
       if (target.endRx !== target.startRx || target.endRy !== target.startRy) {
         const { x: startPx, y: startPy } = toPixel(target.startRx, target.startRy, canvasSize.w, canvasSize.h);
         const { x: endPx, y: endPy } = toPixel(target.endRx, target.endRy, canvasSize.w, canvasSize.h);
@@ -213,14 +217,11 @@ export default function AnimPitchCanvas() {
         ctx.setLineDash([]);
       }
 
-      // Player circle — blue if has role, grey if unassigned
       ctx.fillStyle = role ? '#3b82f6' : '#4b5563';
       ctx.beginPath();
       ctx.arc(px, py, PLAYER_RADIUS, 0, Math.PI * 2);
       ctx.fill();
 
-      // Player number from positions data
-      const positions = getDefaultPositions(sport as Sport).home;
       const posData = positions.find(p => p.id === target.playerId);
       ctx.fillStyle = '#ffffff';
       ctx.font = 'bold 10px sans-serif';

@@ -35,10 +35,10 @@ export default function PressingPage() {
     name, sport, setName, setSport, currentSection, selectSection, reset,
     playerRoles, activeTriggers, pressPhases,
   } = usePressStore();
-  const { saveSchema, loading: saving } = usePressSchemas();
+  const { saveSchema } = usePressSchemas();
   const [showShare, setShowShare] = useState(false);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
-  const [saveError, setSaveError] = useState('');
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [schemaRefreshKey, setSchemaRefreshKey] = useState(0);
 
   /** Returns true when a section has been meaningfully configured */
@@ -54,9 +54,15 @@ export default function PressingPage() {
     }
   }
 
+  useEffect(() => {
+    if (saveStatus !== 'saved') return;
+    const t = setTimeout(() => setSaveStatus('idle'), 2000);
+    return () => clearTimeout(t);
+  }, [saveStatus]);
+
   async function handleSave() {
     setSaveStatus('saving');
-    setSaveError('');
+    setSaveError(null);
     try {
       const state = usePressStore.getState();
       await saveSchema({
@@ -69,20 +75,11 @@ export default function PressingPage() {
         postPress: state.postPress,
       });
       setSaveStatus('saved');
-      setSchemaRefreshKey(k => k + 1); // Tell PressSchemaList to reload
-      // Reset status after 2 seconds
-      setTimeout(() => setSaveStatus('idle'), 2000);
+      setSchemaRefreshKey(k => k + 1);
     } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Failed to save schema';
-      setSaveError(msg);
+      setSaveError(err instanceof Error ? err.message : 'Failed to save schema');
       setSaveStatus('error');
     }
-  }
-
-  function getSaveButtonLabel() {
-    if (saving || saveStatus === 'saving') return 'Saving...';
-    if (saveStatus === 'saved') return 'Saved ✓';
-    return 'Save';
   }
 
   return (
@@ -126,14 +123,14 @@ export default function PressingPage() {
           <div className="flex gap-2 flex-wrap">
             <button
               onClick={handleSave}
-              disabled={saving || saveStatus === 'saving'}
+              disabled={saveStatus === 'saving'}
               className="px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-60 transition-all"
               style={{
                 background: saveStatus === 'saved' ? 'var(--green)' : saveStatus === 'error' ? 'var(--red)' : 'var(--acc)',
                 color: '#0b0f18',
               }}
             >
-              {getSaveButtonLabel()}
+              {saveStatus === 'saving' ? 'Saving...' : saveStatus === 'saved' ? 'Saved ✓' : 'Save'}
             </button>
             <button
               onClick={() => setShowShare(true)}
