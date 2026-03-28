@@ -8,13 +8,18 @@ interface Props {
   onClose: () => void;
 }
 
-function generateWhatsAppMessage(playName: string, sport: string, phases: Phase[]): string {
+function generateWhatsAppMessage(
+  playName: string,
+  sport: string,
+  phases: Phase[],
+  playerNames: Record<'home' | 'away', Record<number, string>>,
+): string {
   const sportLabel: Record<string, string> = {
     gaa: 'Gaelic Football',
     hurling: 'Hurling',
     soccer: 'Soccer',
   };
-  let msg = `*Pitchside* — ${sportLabel[sport] ?? sport}\n\n`;
+  let msg = `*${sportLabel[sport] ?? sport}*\n\n`;
   msg += `*Play: ${playName}*\n`;
   msg += `Phases: ${phases.length}\n\n`;
 
@@ -24,31 +29,42 @@ function generateWhatsAppMessage(playName: string, sport: string, phases: Phase[
       msg += '  No runs drawn\n';
     } else {
       phase.runs.forEach(run => {
-        const allPlayers = [...phase.playerPositions.home, ...phase.playerPositions.away];
-        const player = allPlayers.find(p => p.id === run.playerId);
+        const teamPlayers = run.team === 'home'
+          ? phase.playerPositions.home
+          : phase.playerPositions.away;
+        const player = teamPlayers.find(p => p.id === run.playerId);
         if (player) {
-          msg += `• #${player.num} ${player.pos} (${run.team}) — ${run.style}\n`;
+          const customName = playerNames[run.team]?.[player.id];
+          const displayName = customName
+            ? `#${player.num} ${customName}`
+            : `#${player.num} ${player.pos}`;
+          msg += `• ${displayName} — ${run.style}\n`;
         }
       });
     }
     msg += '\n';
   });
 
-  msg += `Created with Pitchside — Independent coaching tools for Gaelic and Soccer coaches — pitchside.app`;
+  msg += `Shared via Pitchside — pitchside.fyi`;
   return msg;
 }
 
 export default function ShareModal({ playName, onClose }: Props) {
-  const { phases, sport } = useBoardStore();
+  const { phases, sport, playerNames } = useBoardStore();
 
   function shareWhatsApp() {
-    const message = generateWhatsAppMessage(playName || 'Untitled play', sport, phases);
+    const message = generateWhatsAppMessage(
+      playName || 'Untitled play',
+      sport,
+      phases,
+      playerNames,
+    );
     const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
   }
 
   function copyLink() {
-    navigator.clipboard.writeText('https://pitchside.app');
+    navigator.clipboard.writeText('https://pitchside.fyi');
   }
 
   return (

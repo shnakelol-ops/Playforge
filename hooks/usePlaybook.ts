@@ -47,7 +47,7 @@ export function usePlaybook() {
       throw new Error('FREE_LIMIT');
     }
 
-    await supabase.from('plays').insert({
+    const { error: insertError } = await supabase.from('plays').insert({
       user_id: user.id,
       name,
       category,
@@ -55,6 +55,8 @@ export function usePlaybook() {
       phases,
       notes,
     });
+
+    if (insertError) throw insertError;
 
     await fetchPlays();
   }
