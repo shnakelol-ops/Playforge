@@ -70,7 +70,7 @@ export default function PrivacyPage() {
               <li><strong>Right to data portability:</strong> Export your data in machine-readable format</li>
             </ul>
             <p className="mb-4">
-              To exercise any of these rights, contact us at hello@playforge.app.
+              To exercise any of these rights, contact us at hello@pitchside.fyi.
             </p>
           </section>
 
@@ -105,7 +105,7 @@ export default function PrivacyPage() {
               If you have questions about your data, wish to exercise your rights, or have a privacy concern, contact us at:
             </p>
             <p className="font-semibold mb-4">
-              Email: <a href="mailto:hello@playforge.app" style={{ color: 'var(--acc)' }}>hello@playforge.app</a>
+              Email: <a href="mailto:hello@pitchside.fyi" style={{ color: 'var(--acc)' }}>hello@pitchside.fyi</a>
             </p>
             <p className="mb-4">
               We will respond to all data requests within 30 days as required by law.

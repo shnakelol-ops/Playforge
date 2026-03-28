@@ -1,6 +1,6 @@
 const testimonials = [
   {
-    quote: "PlayForge has completely changed how I prepare for matches. I can show the players exactly what I want in seconds.",
+    quote: "Pitchside has completely changed how I prepare for matches. I can show the players exactly what I want in seconds.",
     name: "Seán O'Brien",
     role: "Senior Football Manager, Club Gaelic",
   },

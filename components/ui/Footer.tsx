@@ -66,8 +66,8 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <a href="mailto:hello@playforge.app" style={{ color: 'var(--txt2)' }} className="hover:text-accent transition-colors">
-                  Contact: hello@playforge.app
+                <a href="mailto:hello@pitchside.fyi" style={{ color: 'var(--txt2)' }} className="hover:text-accent transition-colors">
+                  Contact: hello@pitchside.fyi
                 </a>
               </li>
             </ul>

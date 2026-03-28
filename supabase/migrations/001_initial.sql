@@ -1,4 +1,4 @@
--- PlayForge initial schema
+-- Pitchside initial schema
 
 CREATE TABLE profiles (
   id UUID REFERENCES auth.users(id) PRIMARY KEY,

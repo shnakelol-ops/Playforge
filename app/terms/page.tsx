@@ -174,7 +174,7 @@ export default function TermsPage() {
               For questions about these Terms or the service:
             </p>
             <p className="font-semibold mb-4">
-              Email: <a href="mailto:hello@playforge.app" style={{ color: 'var(--acc)' }}>hello@playforge.app</a>
+              Email: <a href="mailto:hello@pitchside.fyi" style={{ color: 'var(--acc)' }}>hello@pitchside.fyi</a>
             </p>
           </section>
 

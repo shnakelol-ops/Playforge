@@ -16,7 +16,7 @@ export default function PricingPage() {
             <p className="font-display text-xl tracking-widest" style={{ color: 'var(--acc)' }}>PITCHSIDE</p>
             <div className="flex gap-6 text-sm flex-wrap justify-center" style={{ color: 'var(--txt2)' }}>
               <Link href="/" style={{ color: 'var(--txt2)' }}>Home</Link>
-              <a href="mailto:hello@playforge.app" style={{ color: 'var(--txt2)' }}>Contact</a>
+              <a href="mailto:hello@pitchside.fyi" style={{ color: 'var(--txt2)' }}>Contact</a>
               <Link href="/privacy" style={{ color: 'var(--txt2)' }}>Privacy Policy</Link>
               <Link href="/terms" style={{ color: 'var(--txt2)' }}>Terms</Link>
             </div>

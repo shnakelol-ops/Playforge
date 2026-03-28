@@ -1,4 +1,4 @@
-# PlayForge Professional Audit — Implementation Checklist
+# Pitchside Professional Audit — Implementation Checklist
 
 ## PART 1 — DESIGN SYSTEM ✅
 - [x] Color palette enforced (--bg, --bg2-4, --acc, red/amber, --txt-txt3, --bdr-bdr2)

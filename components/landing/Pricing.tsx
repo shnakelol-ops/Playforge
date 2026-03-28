@@ -26,7 +26,7 @@ const plans = [
     period: 'per year',
     features: ['Up to 15 coaches', 'Shared playbook', 'Admin dashboard', 'All Pro features'],
     cta: 'Contact us',
-    href: 'mailto:hello@playforge.app',
+    href: 'mailto:hello@pitchside.fyi',
     highlight: false,
   },
   {
@@ -35,7 +35,7 @@ const plans = [
     period: '',
     features: ['Unlimited coaches', 'White-label option', 'API access', 'Dedicated support'],
     cta: 'Get in touch',
-    href: 'mailto:hello@playforge.app',
+    href: 'mailto:hello@pitchside.fyi',
     highlight: false,
   },
 ];
