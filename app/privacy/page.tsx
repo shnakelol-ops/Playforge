@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Footer from '@/components/ui/Footer';
 
 export default function PrivacyPage() {
   return (
@@ -126,16 +127,7 @@ export default function PrivacyPage() {
         </div>
       </article>
 
-      <footer className="py-8 px-6 text-center" style={{ background: 'var(--bg2)', borderTop: '1px solid var(--bdr)' }}>
-        <div className="max-w-3xl mx-auto">
-          <div className="flex gap-4 justify-center mb-4 text-sm flex-wrap" style={{ color: 'var(--txt2)' }}>
-            <Link href="/" style={{ color: 'var(--txt2)' }}>Home</Link>
-            <Link href="/terms" style={{ color: 'var(--txt2)' }}>Terms of Service</Link>
-            <a href="mailto:hello@playforge.app" style={{ color: 'var(--txt2)' }}>Contact</a>
-          </div>
-          <p className="text-xs" style={{ color: 'var(--txt2)' }}>© 2025 PlayForge</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
