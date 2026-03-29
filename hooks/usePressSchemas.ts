@@ -67,12 +67,12 @@ export function usePressSchemas() {
           .select()
           .single();
 
-        if (err) throw err;
+        if (err) throw new Error(err.message);
         return mapRow(data as PressSchemaRow);
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Failed to save schema';
         setError(message);
-        throw err;
+        throw err instanceof Error ? err : new Error(message);
       } finally {
         setLoading(false);
       }
@@ -94,12 +94,12 @@ export function usePressSchemas() {
           .eq('id', id)
           .single();
 
-        if (err) throw err;
+        if (err) throw new Error(err.message);
         return mapRow(data as PressSchemaRow);
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Failed to load schema';
         setError(message);
-        throw err;
+        throw err instanceof Error ? err : new Error(message);
       } finally {
         setLoading(false);
       }
@@ -119,12 +119,12 @@ export function usePressSchemas() {
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (err) throw err;
+      if (err) throw new Error(err.message);
       return (data as PressSchemaRow[]).map(mapRow);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to list schemas';
       setError(message);
-      throw err;
+      throw err instanceof Error ? err : new Error(message);
     } finally {
       setLoading(false);
     }
@@ -143,11 +143,11 @@ export function usePressSchemas() {
           .delete()
           .eq('id', id);
 
-        if (err) throw err;
+        if (err) throw new Error(err.message);
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Failed to delete schema';
         setError(message);
-        throw err;
+        throw err instanceof Error ? err : new Error(message);
       } finally {
         setLoading(false);
       }
