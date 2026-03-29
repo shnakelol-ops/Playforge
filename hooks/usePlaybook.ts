@@ -112,11 +112,21 @@ export function usePlaybook() {
     await fetchPlays();
   }
 
+  async function updatePlay(id: string, updates: { name?: string; category?: string; notes?: string }) {
+    const supabase = createClient();
+    const { error } = await supabase.from('plays').update(updates).eq('id', id);
+    if (error) {
+      console.error('[updatePlay] Error:', error);
+      throw new Error(error.message);
+    }
+    setPlays(prev => prev.map(p => p.id === id ? { ...p, ...updates } : p));
+  }
+
   async function deletePlay(id: string) {
     const supabase = createClient();
     await supabase.from('plays').delete().eq('id', id);
     setPlays(prev => prev.filter(p => p.id !== id));
   }
 
-  return { plays, loading, savePlay, deletePlay, duplicatePlay, refetch: fetchPlays };
+  return { plays, loading, savePlay, updatePlay, deletePlay, duplicatePlay, refetch: fetchPlays };
 }
