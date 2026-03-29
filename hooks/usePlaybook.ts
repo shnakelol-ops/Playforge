@@ -19,10 +19,11 @@ export function usePlaybook() {
 
   const fetchPlays = useCallback(async () => {
     const supabase = createClient();
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('plays')
       .select('*')
       .order('created_at', { ascending: false });
+    if (error) console.error('[fetchPlays] Supabase error:', error);
     setPlays(data ?? []);
     setLoading(false);
   }, []);
@@ -33,19 +34,27 @@ export function usePlaybook() {
 
   async function savePlay(name: string, category: string, sport: string, phases: unknown[], notes?: string) {
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError) {
+      console.error('[savePlay] Auth error:', authError);
+      throw new Error('Authentication error: ' + authError.message);
+    }
     if (!user) throw new Error('Not authenticated');
 
-    // Check plan limits
-    const { data: profile } = await supabase
+    const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('plan')
       .eq('id', user.id)
       .single();
 
+    if (profileError) console.error('[savePlay] Profile fetch error:', profileError);
+
     if (profile?.plan === 'free' && plays.length >= 3) {
       throw new Error('FREE_LIMIT');
     }
+
+    console.log('[savePlay] Inserting play:', { name, category, sport, phaseCount: phases.length });
 
     const { error: insertError } = await supabase.from('plays').insert({
       user_id: user.id,
@@ -56,8 +65,12 @@ export function usePlaybook() {
       notes,
     });
 
-    if (insertError) throw insertError;
+    if (insertError) {
+      console.error('[savePlay] Insert error:', insertError);
+      throw new Error(insertError.message);
+    }
 
+    console.log('[savePlay] Play saved successfully');
     await fetchPlays();
   }
 
@@ -82,7 +95,7 @@ export function usePlaybook() {
     if (!playToDuplicate) throw new Error('Play not found');
 
     // Create new play with "Copy" suffix
-    await supabase.from('plays').insert({
+    const { error: dupError } = await supabase.from('plays').insert({
       user_id: user.id,
       name: `${playToDuplicate.name} Copy`,
       category: playToDuplicate.category,
@@ -90,6 +103,11 @@ export function usePlaybook() {
       phases: playToDuplicate.phases,
       notes: playToDuplicate.notes,
     });
+
+    if (dupError) {
+      console.error('[duplicatePlay] Insert error:', dupError);
+      throw new Error(dupError.message);
+    }
 
     await fetchPlays();
   }
