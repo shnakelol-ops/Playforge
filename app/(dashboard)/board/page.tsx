@@ -22,12 +22,12 @@ export default function BoardPage() {
   const [showBench, setShowBench] = useState(false);
   const [showSidebar, setShowSidebar] = useState(false);
   const [currentPlayName, setCurrentPlayName] = useState('');
-  const { phases, sport, mode } = useBoardStore();
+  const { phases, sport, mode, playerNames } = useBoardStore();
   const { savePlay } = usePlaybook();
 
   async function handleSave(name: string, category: string, notes?: string) {
     try {
-      await savePlay(name, category, sport, phases as unknown[], notes);
+      await savePlay(name, category, sport, phases as unknown[], notes, playerNames as Record<string, Record<string, string>>);
       setCurrentPlayName(name);
     } catch (err) {
       if (err instanceof Error && err.message === 'FREE_LIMIT') {

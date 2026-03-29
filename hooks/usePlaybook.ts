@@ -10,6 +10,7 @@ export interface SavedPlay {
   sport: string;
   phases: unknown[];
   notes?: string;
+  player_names?: Record<string, Record<string, string>>;
   created_at: string;
 }
 
@@ -32,7 +33,14 @@ export function usePlaybook() {
     fetchPlays();
   }, [fetchPlays]);
 
-  async function savePlay(name: string, category: string, sport: string, phases: unknown[], notes?: string) {
+  async function savePlay(
+    name: string,
+    category: string,
+    sport: string,
+    phases: unknown[],
+    notes?: string,
+    playerNames?: Record<string, Record<string, string>>,
+  ) {
     const supabase = createClient();
 
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -63,6 +71,7 @@ export function usePlaybook() {
       sport,
       phases,
       notes,
+      player_names: playerNames ?? {},
     });
 
     if (insertError) {
@@ -112,7 +121,7 @@ export function usePlaybook() {
     await fetchPlays();
   }
 
-  async function updatePlay(id: string, updates: { name?: string; category?: string; notes?: string }) {
+  async function updatePlay(id: string, updates: { name?: string; category?: string; notes?: string | null }) {
     const supabase = createClient();
     const { error } = await supabase.from('plays').update(updates).eq('id', id);
     if (error) {
@@ -124,7 +133,11 @@ export function usePlaybook() {
 
   async function deletePlay(id: string) {
     const supabase = createClient();
-    await supabase.from('plays').delete().eq('id', id);
+    const { error } = await supabase.from('plays').delete().eq('id', id);
+    if (error) {
+      console.error('[deletePlay] Error:', error);
+      throw new Error(error.message);
+    }
     setPlays(prev => prev.filter(p => p.id !== id));
   }
 

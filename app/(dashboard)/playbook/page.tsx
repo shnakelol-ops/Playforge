@@ -8,12 +8,13 @@ import { usePlaybook } from '@/hooks/usePlaybook';
 import { useBoardStore } from '@/lib/store';
 import type { Phase } from '@/lib/store';
 
-const CATEGORIES = ['attack', 'defence', 'kickout', 'setpiece'];
+const PRESET_CATEGORIES = ['attack', 'defence', 'kickout', 'setpiece'];
 
 interface EditState {
   id: string;
   name: string;
   category: string;
+  customCategory: string;
   notes: string;
 }
 
@@ -27,36 +28,64 @@ export default function PlaybookPage() {
   const [editing, setEditing] = useState<EditState | null>(null);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const uniqueCategories = Array.from(new Set(plays.map(p => p.category)));
   const categories = ['all', ...uniqueCategories];
   const filtered = filter === 'all' ? plays : plays.filter(p => p.category === filter);
 
-  function handleLoad(play: { id: string; phases: unknown[]; sport: string }) {
-    loadPlay(play.phases as Phase[], play.sport as 'gaa' | 'hurling' | 'soccer');
+  function handleLoad(play: { id: string; phases: unknown[]; sport: string; player_names?: Record<string, Record<string, string>> }) {
+    loadPlay(
+      play.phases as Phase[],
+      play.sport as 'gaa' | 'hurling' | 'soccer',
+      play.player_names as Record<'home' | 'away', Record<number, string>> | undefined,
+    );
     router.push('/board');
   }
 
   function startEdit(play: { id: string; name: string; category: string; notes?: string }) {
-    setEditing({ id: play.id, name: play.name, category: play.category, notes: play.notes ?? '' });
+    const isPreset = PRESET_CATEGORIES.includes(play.category);
+    setEditing({
+      id: play.id,
+      name: play.name,
+      category: isPreset ? play.category : '',
+      customCategory: isPreset ? '' : play.category,
+      notes: play.notes ?? '',
+    });
     setSaveError(null);
   }
 
   async function handleSaveEdit() {
-    if (!editing || !editing.name.trim()) return;
+    if (!editing) return;
+    const name = editing.name.trim();
+    if (!name) return;
+    const finalCategory = editing.customCategory.trim() || editing.category;
+    if (!finalCategory) return;
+
     setSaving(true);
     setSaveError(null);
     try {
       await updatePlay(editing.id, {
-        name: editing.name.trim(),
-        category: editing.category,
-        notes: editing.notes.trim() || undefined,
+        name,
+        category: finalCategory,
+        notes: editing.notes.trim() || null,
       });
       setEditing(null);
     } catch (err) {
       setSaveError(err instanceof Error ? err.message : 'Failed to save');
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function handleDelete(playId: string) {
+    setDeleteError(null);
+    try {
+      await deletePlay(playId);
+      setConfirmDelete(null);
+    } catch (err) {
+      setDeleteError(err instanceof Error ? err.message : 'Failed to delete');
+      setConfirmDelete(null);
     }
   }
 
@@ -88,6 +117,12 @@ export default function PlaybookPage() {
             + New play
           </Link>
         </div>
+
+        {deleteError && (
+          <p className="mb-4 text-xs px-3 py-2 rounded-lg" style={{ background: 'rgba(239,68,68,0.15)', color: 'var(--red)', border: '1px solid rgba(239,68,68,0.3)' }}>
+            {deleteError}
+          </p>
+        )}
 
         {/* Category filter tabs */}
         <div className="flex gap-2 mb-6 overflow-x-auto pb-1">
@@ -140,20 +175,28 @@ export default function PlaybookPage() {
                       <div className="flex flex-col gap-1">
                         <label className="text-xs" style={{ color: 'var(--txt2)' }}>Category</label>
                         <div className="flex gap-2 flex-wrap">
-                          {CATEGORIES.map(cat => (
+                          {PRESET_CATEGORIES.map(cat => (
                             <button
                               key={cat}
-                              onClick={() => setEditing({ ...editing, category: cat })}
+                              onClick={() => setEditing({ ...editing, category: cat, customCategory: '' })}
                               className="px-3 py-1 rounded-lg text-xs capitalize"
                               style={{
-                                background: editing.category === cat ? 'var(--acc)' : 'var(--bg3)',
-                                color: editing.category === cat ? '#0b0f18' : 'var(--txt2)',
+                                background: editing.category === cat && !editing.customCategory ? 'var(--acc)' : 'var(--bg3)',
+                                color: editing.category === cat && !editing.customCategory ? '#0b0f18' : 'var(--txt2)',
                               }}
                             >
                               {cat}
                             </button>
                           ))}
                         </div>
+                        <input
+                          type="text"
+                          placeholder="Or enter custom category"
+                          value={editing.customCategory}
+                          onChange={e => setEditing({ ...editing, customCategory: e.target.value, category: e.target.value ? '' : editing.category })}
+                          className="mt-1 px-3 py-1.5 rounded-lg text-xs outline-none"
+                          style={{ background: 'var(--bg3)', color: 'var(--txt)', border: '1px solid var(--bdr)' }}
+                        />
                       </div>
 
                       <textarea
@@ -181,7 +224,7 @@ export default function PlaybookPage() {
                         </button>
                         <button
                           onClick={handleSaveEdit}
-                          disabled={saving || !editing.name.trim()}
+                          disabled={saving || !editing.name.trim() || (!editing.category && !editing.customCategory.trim())}
                           className="px-3 py-1.5 rounded-lg text-xs font-semibold disabled:opacity-60"
                           style={{ background: 'var(--acc)', color: '#0b0f18' }}
                         >
@@ -234,7 +277,7 @@ export default function PlaybookPage() {
                           {confirmDelete === play.id ? (
                             <>
                               <button
-                                onClick={() => { deletePlay(play.id); setConfirmDelete(null); }}
+                                onClick={() => handleDelete(play.id)}
                                 className="px-3 py-1.5 rounded-lg text-xs font-medium"
                                 style={{ background: '#ef4444', color: '#fff' }}
                               >

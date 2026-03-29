@@ -146,7 +146,7 @@ interface BoardStore {
   removeTextLabel: (phaseIndex: number, id: string) => void;
   setPlayerName: (team: 'home' | 'away', playerId: number, name: string) => void;
   setPhaseNotes: (phaseIndex: number, notes: string) => void;
-  loadPlay: (phases: Phase[], sport: Sport) => void;
+  loadPlay: (phases: Phase[], sport: Sport, playerNames?: Record<'home' | 'away', Record<number, string>>) => void;
   resetBoard: (sport: Sport) => void;
 }
 
@@ -389,7 +389,13 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
     set({ phases });
   },
 
-  loadPlay: (phases, sport) => set({ phases, sport, currentPhase: 0, animating: false }),
+  loadPlay: (phases, sport, playerNames) => set({
+    phases,
+    sport,
+    currentPhase: 0,
+    animating: false,
+    playerNames: playerNames ?? { home: {}, away: {} },
+  }),
 
   resetBoard: (sport) => set({ phases: [createInitialPhase(sport)], currentPhase: 0, animating: false }),
 }));
