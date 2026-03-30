@@ -111,6 +111,7 @@ export function usePlaybook() {
       sport: playToDuplicate.sport,
       phases: playToDuplicate.phases,
       notes: playToDuplicate.notes,
+      player_names: playToDuplicate.player_names ?? {},
     });
 
     if (dupError) {

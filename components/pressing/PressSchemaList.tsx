@@ -48,7 +48,9 @@ export default function PressSchemaList({ refreshTrigger }: Props) {
     loadSchema(schema);
   }
 
-  if (loading || schemas.length === 0) {
+  if (loading) return null;
+
+  if (schemas.length === 0) {
     return (
       <div className="text-center py-8" style={{ color: 'var(--txt2)' }}>
         <p className="text-sm">No saved pressing schemas yet</p>
